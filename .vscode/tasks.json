@@ -1,0 +1,12 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "npm",
+			"script": "dev",
+			"problemMatcher": [],
+			"label": "npm: dev",
+			"detail": "nodemon -x 'tsx' -w src -w package.json -w tsconfig.json -w .env src/app.ts"
+		}
+	]
+}

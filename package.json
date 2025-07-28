@@ -1,0 +1,33 @@
+{
+  "name": "universal-status",
+  "version": "1.0.0",
+  "description": "Put your status on all platforms at once :3",
+  "homepage": "https://github.com/aelithron/universal-status#readme",
+  "bugs": {
+    "url": "https://github.com/aelithron/universal-status/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aelithron/universal-status.git"
+  },
+  "license": "MIT",
+  "author": "Aelithron",
+  "type": "module",
+  "main": "dist/index.ts",
+  "scripts": {
+    "dev": "nodemon -x 'tsx' -w src -w package.json -w tsconfig.json -w .env src/index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.1",
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.3",
+    "@types/node": "^24.1.0",
+    "eslint": "^9.32.0",
+    "nodemon": "^3.1.10",
+    "tsx": "^4.20.3",
+    "typescript": "^5.8.3"
+  }
+}
