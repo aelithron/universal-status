@@ -9,6 +9,10 @@ export default function StatusForm() {
   const [status, setStatus] = useState<string>("");
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (!status || status.length < 1) {
+      alert("Enter a status...");
+      return;
+    }
     fetch("/api/status", { method: "POST", body: JSON.stringify({ status: status }) })
       .then((res) => {
         if (!res) return null;
@@ -30,7 +34,7 @@ export default function StatusForm() {
       });
   }
   return (
-    <form className="flex flex-col gap-2 mt-4" onSubmit={handleSubmit}>
+    <form className="flex flex-col gap-1 mt-4" onSubmit={handleSubmit}>
       <label className="text-sm font-semibold text-center">New Status</label>
       <div className="flex gap-2">
         <input type="text" value={status} onChange={(e) => setStatus(e.target.value)} className="bg-slate-300 dark:bg-slate-700 rounded-xl p-1 border-2 border-slate-500 dark:border-slate-800" />

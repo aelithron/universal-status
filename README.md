@@ -19,3 +19,6 @@ Put your status on all platforms at once :3
   - possibly others
 ## Using
 This will be explained once the app is done! :3
+## Credits
+- Inspired by EchoFeed and Status.Cafe
+- Icons from Font Awesome

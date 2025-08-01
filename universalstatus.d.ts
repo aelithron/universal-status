@@ -1,5 +1,8 @@
+import { Emoji } from "emoji-type"
+
 export type Status = {
   status: string
+  emoji: Emoji
   setAt: Date
 }
 export type UserDoc = {
