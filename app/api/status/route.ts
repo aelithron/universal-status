@@ -8,6 +8,7 @@ export const dynamic = 'force-dynamic';
 export async function GET(req: NextRequest) {
   let email: string = "";
   const emailParam = req.nextUrl.searchParams.get("email");
+  
   // can't do the rest until i finally add a db lol
   return NextResponse.json({ status: "Coding Universal Status :3 (placeholder)", emoji: "🦈", setAt: new Date() }); // TODO: implement this once there's a db :3
 }
