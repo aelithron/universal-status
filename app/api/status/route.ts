@@ -6,6 +6,9 @@ import { NextRequest, NextResponse } from "next/server";
 export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
+  let email: string = "";
+  const emailParam = req.nextUrl.searchParams.get("email");
+  // can't do the rest until i finally add a db lol
   return NextResponse.json({ status: "Coding Universal Status :3 (placeholder)", emoji: "🦈", setAt: new Date() }); // TODO: implement this once there's a db :3
 }
 
@@ -25,7 +28,7 @@ export async function POST(req: NextRequest) {
   // TODO: push to database with setAt: new Date() and the above status and emoji variables
   console.log(`User (not implemented) - ${emoji} ${status} (at ${new Date().toTimeString()})`); // temp demo
 
-  const platformErrors: PlatformError[] = []; // this is for errors from other platforms, when pushing statuses
+  const platformErrors: PlatformError[] = [];
   if (platforms.includes("slack")) {
     const slackUpdate = await updateSlack("aelithron@gmail.com", status, emoji);
     if (slackUpdate.error) platformErrors.push({ platform: "slack", message: slackUpdate.message });
