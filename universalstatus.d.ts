@@ -10,7 +10,8 @@ export type UserDoc = {
   status: Status
   previousStatuses: Status[]
 }
+export type Platform = "status.cafe" | "slack" | "discord";
 export type PlatformError = {
-  platform: "status.cafe" | "slack" | "discord"
+  platform: Platform
   message: string
 }

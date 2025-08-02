@@ -11,7 +11,7 @@ export default async function Home() {
   return (
     <main className="flex flex-col p-8 md:p-20 min-h-screen items-center">
       <h1 className="text-3xl font-semibold"><FontAwesomeIcon icon={faCommentDots} /> Universal Status</h1>
-      <h2 className="text-lg italic">Set your status on all platforms at once</h2>
+      <h2 className="text-lg italic">Set your status on many platforms at once</h2>
       <StatusForm />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 bg-slate-300 dark:bg-slate-700 border-2 border-slate-500 dark:border-slate-800 rounded-lg p-2">
         <div className="flex flex-col items-center place-content-center">
