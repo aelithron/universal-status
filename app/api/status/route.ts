@@ -1,5 +1,5 @@
-import { PlatformError } from "@/universalstatus";
-import { updateSlack } from "@/utils/platforms";
+import { Platform, PlatformError } from "@/universalstatus";
+import getSelectablePlatforms, { updateSlack } from "@/utils/platforms";
 import { Emoji } from "emoji-type";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -14,14 +14,22 @@ export async function POST(req: NextRequest) {
   if (!body) return NextResponse.json({ error: "invalid_body", message: "The request has an invalid or missing body!" });
   if (!body.status || (body.status as string).trim().length < 1) return NextResponse.json({ error: "missing_status", message: "The request was missing a 'status' parameter!" });
   if (!body.emoji || (body.emoji as string).trim().length < 1) return NextResponse.json({ error: "missing_emoji", message: "The request was missing an 'emoji' parameter!" });
+  let platforms: Platform[] = [];
+  if (body.platforms) {
+    platforms = body.platforms;
+  } else {
+    platforms = getSelectablePlatforms();
+  }
   const status = (body.status as string).trim();
   const emoji = (body.emoji as string).trim() as Emoji;
-  // TODO: push to database with setAt: new Date() and the above status variable
+  // TODO: push to database with setAt: new Date() and the above status and emoji variables
   console.log(`User (not implemented) - ${emoji} ${status} (at ${new Date().toTimeString()})`); // temp demo
 
   const platformErrors: PlatformError[] = []; // this is for errors from other platforms, when pushing statuses
-  const slackUpdate = await updateSlack("aelithron@gmail.com", status, emoji);
-  if (slackUpdate.error) platformErrors.push({ platform: "slack", message: slackUpdate.message });
+  if (platforms.includes("slack")) {
+    const slackUpdate = await updateSlack("aelithron@gmail.com", status, emoji);
+    if (slackUpdate.error) platformErrors.push({ platform: "slack", message: slackUpdate.message });
+  }
 
-  return NextResponse.json({ message: "Set status successfully!", platformErrors });
+  return NextResponse.json({ message: "Set status successfully!", platform_errors: platformErrors });
 }

@@ -1,5 +1,5 @@
 "use client";
-import { Platform } from "@/universalstatus";
+import { Platform, PlatformError } from "@/universalstatus";
 import getSelectablePlatforms from "@/utils/platforms";
 import { faArrowRight, faBorderAll } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -45,6 +45,11 @@ export default function StatusForm() {
           return;
         }
         alert("Successfully set status!");
+        if (res.platform_errors) {
+          for (const error of res.platform_errors as PlatformError[]) {
+            alert(`Platform Error (${error.platform}): ${error.message}`);
+          }
+        }
         setStatus("");
         setEmoji("🙂");
         setEmojiPickerOpen(false);

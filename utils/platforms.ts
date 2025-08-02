@@ -16,10 +16,11 @@ export async function updateSlack(user: string, status: string, emoji: Emoji): P
       status_emoji: emoji,
       status_expiration: 0
     }})});
-    if (result.ok) {
+    const jsonResult = await result.json();
+    if (result.ok && jsonResult.ok) {
       return { message: "Status updated successfully!", error: false };
     } else {
-      return { message: `Error from the Slack API: ${(await result.json()).error} (${result.status})`, error: true };
+      return { message: `Error from the Slack API: ${jsonResult.error}`, error: true };
     }
   } catch (e) {
     console.warn(`Unknown error in pushing status to Slack for user "${user}"!\n${e}`);
