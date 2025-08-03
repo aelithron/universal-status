@@ -35,9 +35,9 @@ export async function createUserDoc(user: string): Promise<UserDoc | null> {
     previousStatuses: [],
     slackToken: null
   };
-  await client.db(process.env.MONGODB_DB).collection<UserDoc>("users").insertOne(userDoc);
+  await client.db(process.env.MONGODB_DB).collection<UserDoc>("statuses").insertOne(userDoc);
   return userDoc;
 }
 export async function getUserDoc(user: string): Promise<UserDoc | null> {
-  return await client.db(process.env.MONGODB_DB).collection<UserDoc>("users").findOne({ user });
+  return await client.db(process.env.MONGODB_DB).collection<UserDoc>("statuses").findOne({ user });
 }
