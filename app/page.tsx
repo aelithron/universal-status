@@ -42,10 +42,10 @@ export default async function Home() {
             <form
               action={async () => {
                 "use server"
-                await signOut()
+                await signOut();
               }}
             >
-              <button type="submit" className="bg-violet-300 text-black rounded-xl p-1 border-2 border-slate-500 dark:border-slate-800"><FontAwesomeIcon icon={faSignOut} /> Sign Out</button>
+              <button type="submit" className="bg-violet-300 text-black rounded-xl p-1 border-2 border-slate-500 dark:border-slate-800 hover:text-sky-500"><FontAwesomeIcon icon={faSignOut} /> Sign Out</button>
             </form>
           </div>
         </div>}
@@ -54,10 +54,10 @@ export default async function Home() {
           <form
             action={async () => {
               "use server"
-              await signIn()
+              await signIn();
             }}
           >
-            <button type="submit" className="bg-violet-300 text-black rounded-xl p-1 border-2 border-slate-500 dark:border-slate-800"><FontAwesomeIcon icon={faSignIn} /> Sign In</button>
+            <button type="submit" className="bg-violet-300 text-black rounded-xl p-1 border-2 border-slate-500 dark:border-slate-800 hover:text-sky-500"><FontAwesomeIcon icon={faSignIn} /> Sign In</button>
           </form>
         </div>}
       </div>

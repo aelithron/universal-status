@@ -41,7 +41,7 @@ export default function StatusForm() {
       })
       .then((res) => {
         if (!res || res.error) {
-          alert("Error setting status: " + (res.error || "Unknown Error"));
+          alert(`Error setting status: ${res.message} (${res.error || "Unknown Error"})`);
           return;
         }
         alert("Successfully set status!");
