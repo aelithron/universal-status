@@ -9,7 +9,6 @@ const options = {
     deprecationErrors: true,
   },
 }
-
 if (!uri) throw new Error("No MONGODB_URI environment variable.");
  
 let client: MongoClient;
@@ -40,4 +39,13 @@ export async function createUserDoc(user: string): Promise<UserDoc | null> {
 }
 export async function getUserDoc(user: string): Promise<UserDoc | null> {
   return await client.db(process.env.MONGODB_DB).collection<UserDoc>("statuses").findOne({ user });
+}
+
+export async function enterSlackToken(user: string, slackToken: string) {
+  const collection = client.db(process.env.MONGODB_DB).collection<UserDoc>("statuses");
+  await collection.updateOne({ user: user }, {
+    $set: {
+      slackToken: slackToken
+    }
+  });
 }

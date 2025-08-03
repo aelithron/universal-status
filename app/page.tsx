@@ -1,10 +1,12 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import StatusForm from "./status.form";
-import { faCommentDots, faSignIn, faSignOut } from "@fortawesome/free-solid-svg-icons";
+import { faCommentDots, faGear, faSignIn, faSignOut } from "@fortawesome/free-solid-svg-icons";
 import Image from "next/image";
 import { auth, signOut } from "@/auth";
 import { signIn } from "next-auth/react";
 import { createUserDoc, getUserDoc } from "@/utils/db";
+import Link from "next/link";
+import { Session } from "next-auth";
 
 export const dynamic = 'force-dynamic';
 
@@ -40,36 +42,7 @@ export default async function Home() {
           </div>)}
         </div>
       </div>
-      <div className="flex bg-slate-300 dark:bg-slate-700 border-2 border-slate-500 dark:border-slate-800 rounded-lg gap-2 mt-4">
-        {session?.user && <div className="flex gap-3 p-2 px-4 rounded-lg my-2 items-center">
-          {session.user.image ?
-            <Image src={session.user.image} alt="The user's profile picture." width={60} height={60} className="rounded-full" /> :
-            <div className="w-15 h-15 bg-violet-300 rounded-full" />
-          }
-          <div>
-            <p className="text-lg font-semibold">{session.user.name}</p>
-            <form
-              action={async () => {
-                "use server"
-                await signOut();
-              }}
-            >
-              <button type="submit" className="bg-violet-300 text-black rounded-xl p-1 border-2 border-slate-500 dark:border-slate-800 hover:text-sky-500"><FontAwesomeIcon icon={faSignOut} /> Sign Out</button>
-            </form>
-          </div>
-        </div>}
-        {!session || !session.user && <div className="flex flex-col gap-2 p-2 px-4 text-center">
-          <h1>You aren&apos;t logged in yet!</h1>
-          <form
-            action={async () => {
-              "use server"
-              await signIn();
-            }}
-          >
-            <button type="submit" className="bg-violet-300 text-black rounded-xl p-1 border-2 border-slate-500 dark:border-slate-800 hover:text-sky-500"><FontAwesomeIcon icon={faSignIn} /> Sign In</button>
-          </form>
-        </div>}
-      </div>
+      <UserProfile session={session} showGear={true} />
     </main>
   );
 }
@@ -83,3 +56,39 @@ function formatTime(setAt: Date) {
   });
   return formattedTime;
 };
+
+export function UserProfile({ session, showGear }: { session: Session | null, showGear: boolean }) {
+  return (
+    <div className="flex bg-slate-300 dark:bg-slate-700 border-2 border-slate-500 dark:border-slate-800 rounded-lg gap-2 mt-4">
+      {session?.user && <div className="flex gap-3 p-2 px-4 rounded-lg my-2 items-center">
+        {session.user.image ?
+          <Image src={session.user.image} alt="The user's profile picture." width={60} height={60} className="rounded-full" /> :
+          <div className="w-15 h-15 bg-violet-300 rounded-full" />
+        }
+        <div>
+          <p className="text-lg font-semibold">{session.user.name}</p>
+          <form
+            action={async () => {
+              "use server"
+              await signOut();
+            }}
+          >
+            <button type="submit" className="bg-violet-300 text-black rounded-xl p-1 border-2 border-slate-500 dark:border-slate-800 hover:text-sky-500"><FontAwesomeIcon icon={faSignOut} /> Sign Out</button>
+          </form>
+        </div>
+      </div>}
+      {!session || !session.user && <div className="flex flex-col gap-2 p-2 px-4 text-center">
+        <h1>You aren&apos;t logged in yet!</h1>
+        <form
+          action={async () => {
+            "use server"
+            await signIn();
+          }}
+        >
+          <button type="submit" className="bg-violet-300 text-black rounded-xl p-1 border-2 border-slate-500 dark:border-slate-800 hover:text-sky-500"><FontAwesomeIcon icon={faSignIn} /> Sign In</button>
+        </form>
+      </div>}
+      {showGear && <Link href={"/settings"} className="flex w-fit h-fit p-2 hover:text-sky-500 bg-slate-300 dark:bg-slate-700 border-2 border-slate-500 dark:border-slate-800 rounded-full"><FontAwesomeIcon icon={faGear} /></Link>}
+    </div>
+  );
+}
