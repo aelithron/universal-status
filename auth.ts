@@ -4,7 +4,7 @@ import Slack from "next-auth/providers/slack";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   theme: {
-    logo: "",
+    logo: "https://raw.githubusercontent.com/aelithron/universal-status/refs/heads/main/app/favicon.ico",
   },
   providers: providers(),
   callbacks: {

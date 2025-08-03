@@ -1,17 +1,26 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import StatusForm from "./status.form";
 import { faCommentDots, faSignIn, faSignOut } from "@fortawesome/free-solid-svg-icons";
-import { getFakePreviousStatuses, getFakeStatus } from "@/utils/fakeData";
 import Image from "next/image";
 import { auth, signOut } from "@/auth";
 import { signIn } from "next-auth/react";
+import { createUserDoc, getUserDoc } from "@/utils/db";
 
 export const dynamic = 'force-dynamic';
 
 export default async function Home() {
-  const currentStatus = getFakeStatus();
-  const previousStatuses = getFakePreviousStatuses();
   const session = await auth();
+  let email = "";
+  if (session && session.user && session.user.email) {
+    email = session.user.email;
+  } else {
+    alert("Error finding your session, make sure you're logged in!");
+  }
+  let userDoc = await getUserDoc(email);
+  if (!userDoc && email && email.length >= 1) {
+    userDoc = await createUserDoc(email);
+    if (!userDoc) alert("Couldn't add you to the database, there was an error!");
+  }
   return (
     <main className="flex flex-col p-8 md:p-20 min-h-screen items-center">
       <h1 className="text-3xl font-semibold"><FontAwesomeIcon icon={faCommentDots} /> Universal Status</h1>
@@ -20,12 +29,12 @@ export default async function Home() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 bg-slate-300 dark:bg-slate-700 border-2 border-slate-500 dark:border-slate-800 rounded-lg p-2">
         <div className="flex flex-col items-center place-content-center">
           <h1 className="font-semibold text-xl">Current status:</h1>
-          <p className="text-lg">{currentStatus.emoji} {currentStatus.status}</p>
-          <p className="text-slate-500">{formatTime(currentStatus.setAt)}</p>
+          <p className="text-lg">{userDoc!.status.emoji} {userDoc!.status.status}</p>
+          <p className="text-slate-500">{formatTime(userDoc!.status.setAt)}</p>
         </div>
-        <div className="">
+        <div>
           <h1 className="font-semibold text-xl">Previous statuses:</h1>
-          {previousStatuses.slice(-5).toReversed().map((statusEntry, index) => <div key={index} className="flex justify-between gap-2">
+          {userDoc!.previousStatuses.slice(-5).toReversed().map((statusEntry, index) => <div key={index} className="flex justify-between gap-2">
             <p>{statusEntry.emoji} {statusEntry.status}</p>
             <p className="text-slate-500">{formatTime(statusEntry.setAt)}</p>
           </div>)}
