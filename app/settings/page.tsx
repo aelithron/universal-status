@@ -1,11 +1,11 @@
-import { faGear, faHome, faMinusCircle } from "@fortawesome/free-solid-svg-icons";
+import { faGear, faHome } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 import { UserProfile } from "../page";
 import { auth } from "@/auth";
 import { getUserDoc } from "@/utils/db";
 import { faSlack } from "@fortawesome/free-brands-svg-icons";
-import { SlackAuthorizeButton } from "./settingsUI.module";
+import { SlackAuthorizeButton, SlackRemoveButton } from "./settingsUI.module";
 
 export default async function Page() {
   const session = await auth();
@@ -24,6 +24,7 @@ export default async function Page() {
       <Link href={"/"} className="bg-slate-300 dark:bg-slate-700 border-2 border-slate-500 dark:border-slate-800 rounded-xl p-1"><FontAwesomeIcon icon={faHome} /> Go Home</Link>
     </div>
   );
+
   return (
     <div className="flex flex-col min-h-screen p-8 md:p-20 items-center">
       <Link href={"/"} className="bg-slate-300 dark:bg-slate-700 border-2 border-slate-500 dark:border-slate-800 rounded-xl p-1"><FontAwesomeIcon icon={faHome} /> Go Home</Link>
@@ -34,7 +35,7 @@ export default async function Page() {
           <h3 className="text-xl"><FontAwesomeIcon icon={faSlack} /> Slack</h3>
           <div className="flex items-center gap-3">
             <SlackAuthorizeButton clientID={process.env.AUTH_SLACK_ID} isAuthorized={userDoc.slackToken ? true : false} />
-            {!userDoc.slackToken && <button className="bg-red-500 border-2 border-slate-500 dark:border-slate-800 rounded-xl p-1 hover:text-sky-500"><FontAwesomeIcon icon={faMinusCircle} /> Remove</button>}
+            {userDoc.slackToken && <SlackRemoveButton user={email} />}
           </div>
         </div>
       </div>

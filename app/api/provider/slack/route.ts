@@ -1,1 +1,3 @@
-// Slack auth URL: https://slack.com/oauth/v2/authorize?scope=&user_scope=users.profile%3Awrite&redirect_uri=${process.env.BASE_URL}/callback/slack&client_id=${process.env.SLACK_CLIENT_ID}
+export async function DELETE() {
+  
+}

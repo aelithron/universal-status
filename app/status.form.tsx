@@ -1,6 +1,6 @@
 "use client";
 import { Platform, PlatformError } from "@/universalstatus";
-import getSelectablePlatforms from "@/utils/platforms";
+import getSelectablePlatforms from "@/utils/selectablePlatforms";
 import { faArrowRight, faBorderAll } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import EmojiPicker, { EmojiClickData, Theme } from "emoji-picker-react";

@@ -41,7 +41,7 @@ export async function getUserDoc(user: string): Promise<UserDoc | null> {
   return await client.db(process.env.MONGODB_DB).collection<UserDoc>("statuses").findOne({ user });
 }
 
-export async function enterSlackToken(user: string, slackToken: string) {
+export async function enterSlackToken(user: string, slackToken: string | null) {
   const collection = client.db(process.env.MONGODB_DB).collection<UserDoc>("statuses");
   await collection.updateOne({ user: user }, {
     $set: {

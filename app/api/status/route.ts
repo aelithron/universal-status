@@ -1,7 +1,8 @@
 import { auth } from "@/auth";
 import { Platform, PlatformError, UserDoc } from "@/universalstatus";
 import client, { getUserDoc } from "@/utils/db";
-import getSelectablePlatforms, { updateSlack } from "@/utils/platforms";
+import { updateSlack } from "@/utils/platforms";
+import getSelectablePlatforms from "@/utils/selectablePlatforms";
 import { Emoji } from "emoji-type";
 import { NextRequest, NextResponse } from "next/server";
 
