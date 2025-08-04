@@ -1,6 +1,7 @@
 "use client"
 import { faArrowRightToBracket, faMinusCircle } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export function SlackAuthorizeButton({ clientID, isAuthorized }: { clientID: string | undefined, isAuthorized: boolean }) {
@@ -14,7 +15,8 @@ export function SlackAuthorizeButton({ clientID, isAuthorized }: { clientID: str
     </a>
   )
 }
-export function SlackRemoveButton({ user }: { user: string }) {
+export function SlackRemoveButton() {
+  const router = useRouter();
   function removeSlackToken() {
     fetch(`/api/provider/slack`, { method: "DELETE" })
       .then((res) => {
@@ -31,6 +33,7 @@ export function SlackRemoveButton({ user }: { user: string }) {
           alert(`Error removing your token!`);
           return;
         }
+        router.refresh();
       })
   }
   return <button onClick={() => removeSlackToken()} className="bg-red-500 border-2 border-slate-500 dark:border-slate-800 rounded-xl p-1 hover:text-sky-500"><FontAwesomeIcon icon={faMinusCircle} /> Remove</button>

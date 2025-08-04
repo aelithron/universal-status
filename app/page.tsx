@@ -40,6 +40,7 @@ export default async function Home() {
             <p>{statusEntry.emoji} {statusEntry.status}</p>
             <p className="text-slate-500">{formatTime(statusEntry.setAt)}</p>
           </div>)}
+          {userDoc!.previousStatuses.length < 1 && <h3 className="text-lg">You don&apos;t have any previous statuses yet!</h3>}
         </div>
       </div>
       <UserProfile session={session} showGear={true} />
