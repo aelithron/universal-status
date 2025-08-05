@@ -7,6 +7,8 @@ import { getUserDoc } from "@/utils/db";
 import { faSlack } from "@fortawesome/free-brands-svg-icons";
 import { SlackAuthorizeButton, SlackRemoveButton } from "./settingsUI.module";
 
+export const dynamic = "force-dynamic";
+
 export default async function Page() {
   const session = await auth();
   let email = "";
@@ -35,10 +37,11 @@ export default async function Page() {
           <h3 className="text-xl"><FontAwesomeIcon icon={faSlack} /> Slack</h3>
           <div className="flex items-center gap-3">
             <SlackAuthorizeButton clientID={process.env.AUTH_SLACK_ID} isAuthorized={userDoc.slackToken ? true : false} />
-            {userDoc.slackToken && <SlackRemoveButton user={email} />}
+            {userDoc.slackToken && <SlackRemoveButton />}
           </div>
         </div>
       </div>
+      <p className="text-slate-500"><a href="https://github.com/aelithron/universal-status" className="underline hover:text-sky-500">Universal Status</a> version {process.env.IMAGE_TAG || "unknown"}</p>
     </div>
-  )
+  );
 }

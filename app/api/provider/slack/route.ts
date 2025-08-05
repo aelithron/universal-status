@@ -3,6 +3,8 @@ import { UserDoc } from "@/universalstatus";
 import client, { getUserDoc } from "@/utils/db";
 import { NextResponse } from "next/server";
 
+export const dynamic = "force-dynamic";
+
 export async function DELETE() {
   const session = await auth();
   if (!session || !session.user) return NextResponse.json({ error: "unauthorized", message: "Not logged in, please log in to continue." }, { status: 401 });
