@@ -54,11 +54,11 @@ export async function POST(req: NextRequest) {
       previousStatuses: oldStatuses
     },
   });
-  console.log(`User ${session.user.email} - ${emoji} ${status} (at ${setAt.toTimeString()})`); // temp demo
+  console.log(`User ${session.user.email} - ${emoji} ${status} (at ${setAt.toTimeString()})`);
 
   const platformErrors: PlatformError[] = [];
   if (platforms.includes("slack")) {
-    const slackUpdate = await updateSlack("aelithron@gmail.com", status, emoji);
+    const slackUpdate = await updateSlack(session.user.email, status, emoji);
     if (slackUpdate.error) platformErrors.push({ platform: "slack", message: slackUpdate.message });
   }
 
