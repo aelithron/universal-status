@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import StatusForm from "./status.form";
+import StatusForm, { StatusTime } from "./status.form";
 import { faCommentDots, faGear, faSignIn, faSignOut } from "@fortawesome/free-solid-svg-icons";
 import Image from "next/image";
 import { auth, signOut } from "@/auth";
@@ -32,13 +32,13 @@ export default async function Home() {
         <div className="flex flex-col items-center place-content-center">
           <h1 className="font-semibold text-xl">Current status:</h1>
           <p className="text-lg">{userDoc!.status.emoji} {userDoc!.status.status}</p>
-          <p className="text-slate-500">{formatTime(userDoc!.status.setAt)}</p>
+          <StatusTime setAt={userDoc!.status.setAt} />
         </div>
         <div>
           <h1 className="font-semibold text-xl">Previous statuses:</h1>
           {userDoc!.previousStatuses.slice(-5).toReversed().map((statusEntry, index) => <div key={index} className="flex justify-between gap-2">
             <p>{statusEntry.emoji} {statusEntry.status}</p>
-            <p className="text-slate-500">{formatTime(statusEntry.setAt)}</p>
+            <StatusTime setAt={statusEntry.setAt} />
           </div>)}
           {userDoc!.previousStatuses.length < 1 && <h3 className="text-lg">You don&apos;t have any previous statuses yet!</h3>}
         </div>
@@ -47,16 +47,6 @@ export default async function Home() {
     </main>
   );
 }
-function formatTime(setAt: Date) {
-  const formattedTime = new Date(setAt).toLocaleDateString('en-US', {
-    year: '2-digit',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit'
-  });
-  return formattedTime;
-};
 
 export function UserProfile({ session, showGear }: { session: Session | null, showGear: boolean }) {
   return (

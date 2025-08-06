@@ -2,7 +2,6 @@
 import { faArrowRightToBracket, faMinusCircle } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 
 export function SlackAuthorizeButton({ clientID, isAuthorized, authURL }: { clientID: string | undefined, authURL: string | undefined, isAuthorized: boolean }) {
   return (

@@ -96,3 +96,14 @@ function PlatformSelector({ platforms, setPlatforms, allPlatforms }: { platforms
     </div>
   )
 }
+
+export function StatusTime({ setAt }: { setAt: Date }) {
+  const formattedTime = new Date(setAt).toLocaleString(undefined, {
+    year: '2-digit',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+  return <p className="text-slate-500">{formattedTime}</p>
+}
