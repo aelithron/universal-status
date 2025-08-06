@@ -14,12 +14,12 @@ export async function GET(req: NextRequest) {
   const slackTempCode = req.nextUrl.searchParams.get("code");
   if (!slackTempCode) return NextResponse.json({ error: "missing_code", message: "URL is missing a code parameter, please try again with Slack auth!" }, { status: 400 });
 
-  const slackRes = await fetch("https://slack.com/api/oauth.v2.access", { method: "POST", body: JSON.stringify({ code: slackTempCode, client_id: process.env.AUTH_SLACK_ID, client_secret: process.env.AUTH_SLACK_SECRET }) });
+  const slackRes = await fetch("https://slack.com/api/oauth.v2.access", { method: "POST", body: JSON.stringify({ code: slackTempCode, client_id: process.env.AUTH_SLACK_ID, client_secret: process.env.AUTH_SLACK_SECRET, redirect_uri: `${req.nextUrl.origin}/api/provider/slack` }) });
   if (!slackRes) return NextResponse.json({ error: "get_token_failed", message: "Failed to get the Slack authorization token, make sure the code is correct!" }, { status: 500 });
   const slackBody = await slackRes.json();
-  if (!slackBody.access_token) return NextResponse.json({ error: "get_token_failed", message: "Failed to get the Slack authorization token, make sure the code is correct!" }, { status: 500 });
+  if (!slackBody.authed_user || !slackBody.authed_user.access_token) return NextResponse.json({ error: "get_token_failed", message: "Failed to get the Slack authorization token, make sure the code is correct!" }, { status: 500 });
   await client.db(process.env.MONGODB_DB).collection<UserDoc>("statuses").updateOne({ user: session.user.email }, {
-    $set: { slackToken: slackBody.access_token }
+    $set: { slackToken: slackBody.authed_user.access_token }
   });
   return NextResponse.redirect("/settings");
 }

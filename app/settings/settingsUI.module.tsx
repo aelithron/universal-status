@@ -10,7 +10,7 @@ export function SlackAuthorizeButton({ clientID, isAuthorized }: { clientID: str
     setOrigin(window.location.origin);
   }, [])
   return (
-    <a href={`https://slack.com/oauth/v2/authorize?scope=&user_scope=users.profile%3Awrite&redirect_uri=${origin}/api/provider/slack&client_id=${clientID}`} className="hover:text-sky-500 bg-slate-300 dark:bg-slate-700 border-2 border-slate-500 dark:border-slate-800 rounded-xl p-1">
+    <a href={`https://slack.com/oauth/v2/authorize?user_scope=users.profile%3Awrite&redirect_uri=${origin}/api/provider/slack&client_id=${clientID}`} className="hover:text-sky-500 bg-slate-300 dark:bg-slate-700 border-2 border-slate-500 dark:border-slate-800 rounded-xl p-1">
       <FontAwesomeIcon icon={faArrowRightToBracket} /> {isAuthorized ? "Reauthorize" : "Authorize"}
     </a>
   )
