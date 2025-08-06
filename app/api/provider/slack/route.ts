@@ -32,7 +32,7 @@ export async function GET(req: NextRequest) {
   await client.db(process.env.MONGODB_DB).collection<UserDoc>("statuses").updateOne({ user: session.user.email }, {
     $set: { slackToken: slackBody.authed_user.access_token }
   });
-  return NextResponse.redirect("/settings");
+  return NextResponse.redirect(`${process.env.AUTH_URL}/settings`);
 }
 
 export async function DELETE() {
