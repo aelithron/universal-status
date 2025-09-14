@@ -14,8 +14,8 @@ Put your status on many platforms at once :3
 - Minimalist user interface
 - Updates your status on other platforms
   - Slack (via OAuth)
+  - GitHub (via OAuth)
 - Coming soon platforms:
-  - GitHub (via a GitHub App) 
   - Discord (via OAuth)
   - status.cafe (via HTTP)
   - possibly others
