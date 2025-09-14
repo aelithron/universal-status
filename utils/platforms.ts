@@ -28,3 +28,21 @@ export async function updateSlack(user: string, status: string, emoji: Emoji): P
     return { message: `Unknown error, contact the site administrator and tell them to check the console!`, error: true };
   }
 }
+
+export async function updateGithub(user: string, status: string, emoji: Emoji): Promise<{ message: string, error: boolean }> {
+  const userDoc = await getUserDoc(user);
+  if (!userDoc) return { message: "The provided user doesn't exist!", error: true };
+  try {
+    
+    /*
+      if (!error) {
+        return { message: "Status updated successfully!", error: false };
+      } else {
+        return { message: `Error from the GitHub API: ${error}`, error: true };
+      }
+    */
+  } catch (e) {
+    console.warn(`Unknown error in pushing status to GitHub for user "${user}"!\n${e}`);
+    return { message: `Unknown error, contact the site administrator and tell them to check the console!`, error: true };
+  }
+}
