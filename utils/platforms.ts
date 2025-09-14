@@ -40,7 +40,7 @@ export async function updateGithub(user: string, status: string, emoji: Emoji): 
     operation.setContext(({ headers = {} }) => ({
       headers: {
         ...headers,
-        authorization: userDoc.githubPAT,
+        authorization: `Bearer ${userDoc.githubPAT}`,
       },
     }));
     return forward(operation);
@@ -49,18 +49,23 @@ export async function updateGithub(user: string, status: string, emoji: Emoji): 
     link: ApolloLink.from([ghClientAuth, new HttpLink({ uri: "https://api.github.com/graphql" })]),
     cache: new InMemoryCache()
   });
-  const statusRes = await gqlClient.mutate({
-    mutation: gql`
+  try {
+    const statusRes = await gqlClient.mutate({
+      mutation: gql`
       mutation {
         changeUserStatus(input: { clientMutationId: "universal-status-${process.hrtime.bigint()}", emoji: "${emoji}", message: "${status}" }) {
           clientMutationId
         }
       }
     `,
-  });
-  if (!statusRes.error) {
-    return { message: "Status updated successfully!", error: false };
-  } else {
-    return { message: `Error from the GitHub API: ${statusRes.error}`, error: true };
+    });
+    if (!statusRes.error) {
+      return { message: "Status updated successfully!", error: false };
+    } else {
+      return { message: `Error from the GitHub API: ${statusRes.error.name + ` - ` + statusRes.error.message}`, error: true };
+    }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (ignored) {
+    return { message: `Error from the GitHub API: Unknown`, error: true };
   }
 }
