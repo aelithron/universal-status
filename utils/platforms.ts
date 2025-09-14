@@ -76,14 +76,14 @@ export async function updateStatusCafe(user: string, status: string, emoji: Emoj
 
   try {
     const formData = new FormData();
-    formData.append("gorilla.csrf.Token", userDoc.statusCafeToken!); // run this javascript on the homepage to find it: document.querySelector("form > input[type=hidden]").value
+    formData.append("gorilla.csrf.Token", userDoc.statusCafeToken!);
     formData.append("face", emoji);
     formData.append("content", status);
     fetch("https://status.cafe/add?silent=1", {
       method: "POST",
       body: formData,
       headers: {
-        "Cookie": userDoc.statusCafeCookie
+        "Cookie": userDoc.statusCafeCookie!
       }
     });
     return { message: "Status updated successfully!", error: false };
