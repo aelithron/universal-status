@@ -40,7 +40,7 @@ export async function updateGithub(user: string, status: string, emoji: Emoji): 
     operation.setContext(({ headers = {} }) => ({
       headers: {
         ...headers,
-        authorization: `Bearer ${userDoc.githubPAT}`,
+        authorization: `Bearer ${userDoc.githubToken}`,
       },
     }));
     return forward(operation);

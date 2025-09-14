@@ -12,7 +12,7 @@ export type UserDoc = {
   status: Status;
   previousStatuses: Status[];
   slackToken: string | null;
-  githubPAT: string | null;
+  githubToken: string | null;
 }
 export type Platform = "status.cafe" | "slack" | "discord" | "github";
 export type PlatformError = {

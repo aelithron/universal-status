@@ -33,7 +33,7 @@ export async function createUserDoc(user: string): Promise<UserDoc | null> {
     status: { status: "Just joined Universal Status!", emoji: "✨", setAt: new Date() },
     previousStatuses: [],
     slackToken: null,
-    githubPAT: null
+    githubToken: null
   };
   await client.db(process.env.MONGODB_DB).collection<UserDoc>("statuses").insertOne(userDoc);
   return userDoc;

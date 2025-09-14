@@ -4,8 +4,8 @@ import Link from "next/link";
 import { UserProfile } from "../page";
 import { auth } from "@/auth";
 import { getUserDoc } from "@/utils/db";
-import { faSlack } from "@fortawesome/free-brands-svg-icons";
-import { SlackAuthorizeButton, SlackRemoveButton } from "./settingsUI.module";
+import { faGithub, faSlack } from "@fortawesome/free-brands-svg-icons";
+import { GitHubAuthorizeButton, GitHubRemoveButton, SlackAuthorizeButton, SlackRemoveButton } from "./settingsUI.module";
 
 export const dynamic = "force-dynamic";
 
@@ -40,8 +40,15 @@ export default async function Page() {
             {userDoc.slackToken && <SlackRemoveButton />}
           </div>
         </div>
+        <div className="flex flex-col md:flex-row md:justify-between gap-4 md:gap-8 items-center bg-slate-300 dark:bg-slate-700 border-2 border-slate-500 dark:border-slate-800 rounded-xl p-1">
+          <h3 className="text-xl"><FontAwesomeIcon icon={faGithub} /> GitHub</h3>
+          <div className="flex items-center gap-3">
+            <GitHubAuthorizeButton clientID={process.env.GITHUB_ID} authURL={process.env.AUTH_URL} isAuthorized={userDoc.githubToken ? true : false} />
+            {userDoc.githubToken && <GitHubRemoveButton />}
+          </div>
+        </div>
       </div>
-      <p className="text-slate-500"><a href="https://github.com/aelithron/universal-status" className="underline hover:text-sky-500">Universal Status</a> version {process.env.IMAGE_TAG || "unknown"}</p>
+      <p className="text-slate-500 mt-2"><a href="https://github.com/aelithron/universal-status" className="underline hover:text-sky-500">Universal Status</a> version {process.env.IMAGE_TAG || "unknown"}</p>
     </div>
   );
 }
