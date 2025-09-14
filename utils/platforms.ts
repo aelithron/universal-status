@@ -69,3 +69,26 @@ export async function updateGithub(user: string, status: string, emoji: Emoji): 
     return { message: `Error from the GitHub API: Unknown`, error: true };
   }
 }
+
+export async function updateStatusCafe(user: string, status: string, emoji: Emoji): Promise<{ message: string, error: boolean }> {
+  const userDoc = await getUserDoc(user);
+  if (!userDoc) return { message: "The provided user doesn't exist!", error: true };
+
+  try {
+    const formData = new FormData();
+    formData.append("gorilla.csrf.Token", userDoc.statusCafeToken!); // run this javascript on the homepage to find it: document.querySelector("form > input[type=hidden]").value
+    formData.append("face", emoji);
+    formData.append("content", status);
+    fetch("https://status.cafe/add?silent=1", {
+      method: "POST",
+      body: formData,
+      headers: {
+        "Cookie": userDoc.statusCafeCookie
+      }
+    });
+    return { message: "Status updated successfully!", error: false };
+  } catch (e) {
+    console.warn(`Unknown error in pushing status to Status.Café for user "${user}"!\n${e}`);
+    return { message: `Unknown error, contact the site administrator and tell them to check the console!`, error: true };
+  }
+}
