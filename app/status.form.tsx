@@ -8,13 +8,13 @@ import { Emoji } from "emoji-type";
 import { useRouter } from "next/navigation";
 import { Dispatch, FormEvent, SetStateAction, useState } from "react";
 
-export default function StatusForm() {
+export default function StatusForm({ enabledPlatforms }: { enabledPlatforms: Platform[] }) {
   const router = useRouter();
   const allPlatforms = getSelectablePlatforms();
   const [status, setStatus] = useState<string>("");
   const [emoji, setEmoji] = useState<Emoji>("🙂");
   const [emojiPickerOpen, setEmojiPickerOpen] = useState<boolean>(false);
-  const [platforms, setPlatforms] = useState<Platform[]>(allPlatforms);
+  const [platforms, setPlatforms] = useState<Platform[]>(enabledPlatforms);
   const [platformsOpen, setPlatformsOpen] = useState<boolean>(false);
 
   function selectEmoji(e: EmojiClickData) {
