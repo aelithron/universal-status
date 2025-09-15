@@ -87,7 +87,8 @@ export function UserProfile({ session, showGear }: { session: Session | null, sh
 
 function getEnabledPlatforms(userDoc: UserDoc): Platform[] {
   const enabledPlatforms: Platform[] = [];
-  if (userDoc.slackToken) enabledPlatforms.push("slack");
   if (userDoc.githubToken) enabledPlatforms.push("github");
+  if (userDoc.statusCafeToken) enabledPlatforms.push("status.cafe");
+  if (userDoc.slackToken) enabledPlatforms.push("slack");
   return enabledPlatforms;
 }

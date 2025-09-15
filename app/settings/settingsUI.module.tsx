@@ -65,7 +65,7 @@ export function GitHubRemoveButton() {
   return <button onClick={() => removeGitHubToken()} className="bg-red-500 border-2 border-slate-500 dark:border-slate-800 rounded-xl p-1 hover:text-sky-500"><FontAwesomeIcon icon={faMinusCircle} /> Remove</button>
 }
 
-export function StatusCafeAuthorizeButton({ isAuthorized, authURL }: { authURL: string | undefined, isAuthorized: boolean }) {
+export function StatusCafeAuthorizeButton({ isAuthorized }: { isAuthorized: boolean }) {
   return (
     <a href={`/settings/statuscafe`} className="hover:text-sky-500 bg-slate-300 dark:bg-slate-700 border-2 border-slate-500 dark:border-slate-800 rounded-xl p-1">
       <FontAwesomeIcon icon={faArrowRightToBracket} /> {isAuthorized ? "Reauthorize" : "Authorize"}

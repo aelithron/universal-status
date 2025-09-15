@@ -34,7 +34,6 @@ export async function createUserDoc(user: string): Promise<UserDoc | null> {
     previousStatuses: [],
     slackToken: null,
     githubToken: null,
-    statusCafeCookie: null,
     statusCafeToken: null
   };
   await client.db(process.env.MONGODB_DB).collection<UserDoc>("statuses").insertOne(userDoc);
