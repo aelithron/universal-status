@@ -3,7 +3,6 @@ import { UserDoc } from "@/universalstatus";
 import client, { getUserDoc } from "@/utils/db";
 import { NextRequest, NextResponse } from "next/server";
 import { JSDOM } from "jsdom";
-import { parseSetCookie } from "next/dist/compiled/@edge-runtime/cookies";
 
 export const dynamic = "force-dynamic";
 
@@ -33,10 +32,11 @@ export async function POST(req: NextRequest) {
       "gorilla.csrf.Token": csrfToken!.getAttribute("value")!
     }).toString()
   });
-  const userToken = parseSetCookie(loginRes.headers.getSetCookie()[0]);
-  if (!userToken) return NextResponse.json({ success: false }, { status: 401 })
+  const userCookie = loginRes.headers.getSetCookie()[0];
+  console.log(userCookie);
+  if (!userCookie) return NextResponse.json({ success: false }, { status: 401 })
   await client.db(process.env.MONGODB_DB).collection<UserDoc>("statuses").updateOne({ user: session.user.email }, {
-    $set: { statusCafeToken: userToken.value }
+    $set: { statusCafeCookie: userCookie }
   });
   return NextResponse.json({ success: true });
 }
@@ -48,7 +48,7 @@ export async function DELETE() {
   const userDoc = await getUserDoc(session.user.email);
   if (!userDoc) return NextResponse.json({ error: "invalid_user", message: "The provided user doesn't exist, try logging back in." }, { status: 400 });
   await client.db(process.env.MONGODB_DB).collection<UserDoc>("statuses").updateOne({ user: session.user.email }, {
-    $set: { statusCafeToken: null }
+    $set: { statusCafeCookie: null }
   });
-  return NextResponse.json({ message: "Removed your Slack token successfully." });
+  return NextResponse.json({ message: "Removed your Status.Café token successfully." });
 }

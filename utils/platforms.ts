@@ -1,9 +1,11 @@
 import { Emoji } from "emoji-type";
-import { getUserDoc } from "./db";
+import client, { getUserDoc } from "./db";
 import { ApolloClient, gql } from "@apollo/client";
 import { InMemoryCache } from "@apollo/client";
 import { HttpLink } from "@apollo/client";
 import { ApolloLink } from "@apollo/client";
+import { JSDOM } from "jsdom";
+import { UserDoc } from "@/universalstatus";
 
 export async function updateSlack(user: string, status: string, emoji: Emoji): Promise<{ message: string, error: boolean }> {
   const userDoc = await getUserDoc(user);
@@ -64,7 +66,7 @@ export async function updateGithub(user: string, status: string, emoji: Emoji): 
     } else {
       return { message: `Error from the GitHub API: ${statusRes.error.name + ` - ` + statusRes.error.message}`, error: true };
     }
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (ignored) {
     return { message: `Error from the GitHub API: Unknown`, error: true };
   }
@@ -75,16 +77,23 @@ export async function updateStatusCafe(user: string, status: string, emoji: Emoj
   if (!userDoc) return { message: "The provided user doesn't exist!", error: true };
 
   try {
+    const csrfRes = await fetch("https://status.cafe", { headers: { "Cookie": userDoc.statusCafeCookie! } });
+    const csrfCookie = csrfRes.headers.getSetCookie()[0];
     const formData = new FormData();
-    formData.append("gorilla.csrf.Token", userDoc.statusCafeToken!);
+    formData.append("gorilla.csrf.Token", (new JSDOM(await csrfRes.text()).window.document.getElementsByName("gorilla.csrf.Token")[0]).getAttribute("value")!);
     formData.append("face", emoji);
     formData.append("content", status);
-    fetch("https://status.cafe/add?silent=1", {
+    const statusRes = await fetch("https://status.cafe/add?silent=1", {
       method: "POST",
       body: formData,
-      headers: {
-        "Cookie": userDoc.statusCafeCookie!
-      }
+      headers: { "Cookie": `${csrfCookie} ; ${userDoc.statusCafeCookie!}` }
+    });
+    console.log(statusRes);
+    console.log(await statusRes.text());
+    const userToken = statusRes.headers.getSetCookie()[1];
+    if (!userToken) return { message: "Failed to update status: Likely invalid credentials, try reauthenticating!", error: true };
+    await client.db(process.env.MONGODB_DB).collection<UserDoc>("statuses").updateOne({ user }, {
+      $set: { statusCafeCookie: userToken }
     });
     return { message: "Status updated successfully!", error: false };
   } catch (e) {

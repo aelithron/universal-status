@@ -13,7 +13,7 @@ export type UserDoc = {
   previousStatuses: Status[];
   slackToken: string | null;
   githubToken: string | null;
-  statusCafeToken: string | null;
+  statusCafeCookie: string | null;
 }
 export type Platform = "status.cafe" | "slack" | "discord" | "github";
 export type PlatformError = {
