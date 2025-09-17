@@ -19,7 +19,7 @@ Put your status on many platforms at once :3
   - Discord (via OAuth)
   - status.cafe (via HTTP)
   - possibly others
-## Using
+## Usage
 The app is quite easy to use! Go to [status.axionspire.net](https://status.axionspire.net) and sign in with either Discord (suggested) or, only if you are in Hack Club, you can use Slack. Then, if you want to store status updates on other platforms, go to the Settings page and authorize accounts on other platforms.
 ### Selfhosting
 Selfhosting the app is a bit more complex, but can be done! I suggest using Docker, though I am sadly unable to provide a prebuilt image for now.
