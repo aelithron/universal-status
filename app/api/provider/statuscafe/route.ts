@@ -3,6 +3,7 @@ import { UserDoc } from "@/universalstatus";
 import client, { getUserDoc } from "@/utils/db";
 import { NextRequest, NextResponse } from "next/server";
 import { JSDOM } from "jsdom";
+import fetchCookie from "fetch-cookie";
 
 export const dynamic = "force-dynamic";
 
@@ -17,22 +18,27 @@ export async function POST(req: NextRequest) {
   if (!body.username || (body.username as string).trim().length < 1) return NextResponse.json({ error: "missing_username", message: "The request was missing a 'username' parameter!" }, { status: 400 });
   if (!body.password || (body.password as string).trim().length < 1) return NextResponse.json({ error: "missing_password", message: "The request was missing a 'password' parameter!" }, { status: 400 });
 
-  const csrfRes = await fetch("https://status.cafe/login");
+  const jarFetch = fetchCookie(fetch);
+  jarFetch("https://status.cafe");
+  const csrfRes = await jarFetch("https://status.cafe/login");
   const csrfToken = (new JSDOM(await csrfRes.text()).window.document.getElementsByName("gorilla.csrf.Token")[0])!.getAttribute("value")!;
-  const csrfCookie = csrfRes.headers.getSetCookie()?.find(c => c.startsWith("_gorilla_csrf="))!.split(";")[0];
-  const loginRes = await fetch("https://status.cafe/check-login", {
+  await jarFetch("https://status.cafe/check-login", {
     method: "POST",
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
-      "Cookie": csrfCookie!
     },
     body: new URLSearchParams({
       name: body.username,
       password: body.password,
       "gorilla.csrf.Token": csrfToken
-    }).toString()
+    }).toString(),
+    redirect: "follow"
   });
-  const userCookie = loginRes.headers.getSetCookie()?.find(c => c.startsWith("status"))!.split(";")[0];
+
+  const cookies = (await jarFetch.cookieJar.getCookieString("https://status.cafe")).split("; ");
+  const userCookie = cookies.find(c => c.startsWith("status="));
+  const csrfCookie = cookies.find(c => c.startsWith("_gorilla_csrf="));
+  console.log(userCookie, csrfCookie);
   if (!userCookie) return NextResponse.json({ success: false }, { status: 401 })
   await client.db(process.env.MONGODB_DB).collection<UserDoc>("statuses").updateOne({ user: session.user.email }, {
     $set: { statusCafeCookie: userCookie, statusCafeCSRF: csrfCookie }
