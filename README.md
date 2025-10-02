@@ -15,9 +15,9 @@ Put your status on many platforms at once :3
 - Updates your status on other platforms
   - Slack (via OAuth)
   - GitHub (via OAuth)
+  - Status.Cafe (via HTTP)
 - Coming soon platforms:
-  - Discord (via OAuth)
-  - status.cafe (via HTTP)
+  - Discord (via [Rich Presence](https://github.com/aelithron/universal-status-discord))
   - possibly others
 ## Usage
 The app is quite easy to use! Go to [status.axionspire.net](https://status.axionspire.net) and sign in with either Discord (suggested) or, only if you are in Hack Club, you can use Slack. Then, if you want to store status updates on other platforms, go to the Settings page and authorize accounts on other platforms.
