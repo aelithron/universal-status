@@ -18,8 +18,8 @@ export async function POST(req: NextRequest) {
   if (!body.password || (body.password as string).trim().length < 1) return NextResponse.json({ error: "missing_password", message: "The request was missing a 'password' parameter!" }, { status: 400 });
 
   const csrfRes = await fetch("https://status.cafe/login");
-  const csrfToken = new JSDOM(await csrfRes.text()).window.document.getElementsByName("gorilla.csrf.Token")[0];
-  const csrfCookie = csrfRes.headers.getSetCookie()[0];
+  const csrfToken = (new JSDOM(await csrfRes.text()).window.document.getElementsByName("gorilla.csrf.Token")[0])!.getAttribute("value")!;
+  const csrfCookie = csrfRes.headers.getSetCookie()?.find(c => c.startsWith("_gorilla_csrf="))!.split(";")[0];
   const loginRes = await fetch("https://status.cafe/check-login", {
     method: "POST",
     headers: {
@@ -29,14 +29,13 @@ export async function POST(req: NextRequest) {
     body: new URLSearchParams({
       name: body.username,
       password: body.password,
-      "gorilla.csrf.Token": csrfToken!.getAttribute("value")!
+      "gorilla.csrf.Token": csrfToken
     }).toString()
   });
-  const userCookie = loginRes.headers.getSetCookie()[0];
-  console.log(userCookie);
+  const userCookie = loginRes.headers.getSetCookie()?.find(c => c.startsWith("status"))!.split(";")[0];
   if (!userCookie) return NextResponse.json({ success: false }, { status: 401 })
   await client.db(process.env.MONGODB_DB).collection<UserDoc>("statuses").updateOne({ user: session.user.email }, {
-    $set: { statusCafeCookie: userCookie }
+    $set: { statusCafeCookie: userCookie, statusCafeCSRF: csrfCookie }
   });
   return NextResponse.json({ success: true });
 }
@@ -48,7 +47,7 @@ export async function DELETE() {
   const userDoc = await getUserDoc(session.user.email);
   if (!userDoc) return NextResponse.json({ error: "invalid_user", message: "The provided user doesn't exist, try logging back in." }, { status: 400 });
   await client.db(process.env.MONGODB_DB).collection<UserDoc>("statuses").updateOne({ user: session.user.email }, {
-    $set: { statusCafeCookie: null }
+    $set: { statusCafeCookie: null, statusCafeCSRF: null }
   });
   return NextResponse.json({ message: "Removed your Status.Café token successfully." });
 }

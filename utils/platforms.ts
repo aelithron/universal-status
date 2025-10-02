@@ -77,20 +77,19 @@ export async function updateStatusCafe(user: string, status: string, emoji: Emoj
   if (!userDoc) return { message: "The provided user doesn't exist!", error: true };
 
   try {
-    const csrfRes = await fetch("https://status.cafe", { headers: { "Cookie": userDoc.statusCafeCookie! } });
-    const csrfCookie = csrfRes.headers.getSetCookie()[0];
+    const csrfRes = await fetch("https://status.cafe", { headers: { "Cookie": `${userDoc.statusCafeCSRF}; ${userDoc.statusCafeCookie!}` } });
     const formData = new FormData();
     formData.append("gorilla.csrf.Token", (new JSDOM(await csrfRes.text()).window.document.getElementsByName("gorilla.csrf.Token")[0]).getAttribute("value")!);
     formData.append("face", emoji);
     formData.append("content", status);
-    const statusRes = await fetch("https://status.cafe/add?silent=1", {
+    const statusRes = await fetch("https://status.cafe/add", {
       method: "POST",
       body: formData,
-      headers: { "Cookie": `${csrfCookie} ; ${userDoc.statusCafeCookie!}` }
+      headers: { "Cookie": `${userDoc.statusCafeCSRF}; ${userDoc.statusCafeCookie!}` }
     });
     console.log(statusRes);
     console.log(await statusRes.text());
-    const userToken = statusRes.headers.getSetCookie()[1];
+    const userToken = statusRes.headers.getSetCookie()?.find(c => c.startsWith("status"))!.split(";")[0];
     if (!userToken) return { message: "Failed to update status: Likely invalid credentials, try reauthenticating!", error: true };
     await client.db(process.env.MONGODB_DB).collection<UserDoc>("statuses").updateOne({ user }, {
       $set: { statusCafeCookie: userToken }

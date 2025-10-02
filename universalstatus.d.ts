@@ -14,6 +14,7 @@ export type UserDoc = {
   slackToken: string | null;
   githubToken: string | null;
   statusCafeCookie: string | null;
+  statusCafeCSRF: string | null;
 }
 export type Platform = "status.cafe" | "slack" | "discord" | "github";
 export type PlatformError = {
