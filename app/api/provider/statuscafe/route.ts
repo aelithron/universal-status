@@ -38,7 +38,6 @@ export async function POST(req: NextRequest) {
   const cookies = (await jarFetch.cookieJar.getCookieString("https://status.cafe")).split("; ");
   const userCookie = cookies.find(c => c.startsWith("status="));
   const csrfCookie = cookies.find(c => c.startsWith("_gorilla_csrf="));
-  console.log(userCookie, csrfCookie);
   if (!userCookie) return NextResponse.json({ success: false }, { status: 401 })
   await client.db(process.env.MONGODB_DB).collection<UserDoc>("statuses").updateOne({ user: session.user.email }, {
     $set: { statusCafeCookie: userCookie, statusCafeCSRF: csrfCookie }
