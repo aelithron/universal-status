@@ -33,20 +33,13 @@ export async function createUserDoc(user: string): Promise<UserDoc | null> {
     status: { status: "Just joined Universal Status!", emoji: "✨", setAt: new Date() },
     previousStatuses: [],
     slackToken: null,
-    githubToken: null
+    githubToken: null,
+    statusCafeCookie: null,
+    statusCafeCSRF: null
   };
   await client.db(process.env.MONGODB_DB).collection<UserDoc>("statuses").insertOne(userDoc);
   return userDoc;
 }
 export async function getUserDoc(user: string): Promise<UserDoc | null> {
   return await client.db(process.env.MONGODB_DB).collection<UserDoc>("statuses").findOne({ user });
-}
-
-export async function enterSlackToken(user: string, slackToken: string | null) {
-  const collection = client.db(process.env.MONGODB_DB).collection<UserDoc>("statuses");
-  await collection.updateOne({ user: user }, {
-    $set: {
-      slackToken: slackToken
-    }
-  });
 }

@@ -7,6 +7,7 @@ import { signIn } from "next-auth/react";
 import { createUserDoc, getUserDoc } from "@/utils/db";
 import Link from "next/link";
 import { Session } from "next-auth";
+import { Platform, UserDoc } from "@/universalstatus";
 
 export const dynamic = 'force-dynamic';
 
@@ -27,7 +28,7 @@ export default async function Home() {
     <main className="flex flex-col p-8 md:p-20 min-h-screen items-center">
       <h1 className="text-3xl font-semibold"><FontAwesomeIcon icon={faCommentDots} /> Universal Status</h1>
       <h2 className="text-lg italic">Set your status on many platforms at once</h2>
-      <StatusForm />
+      <StatusForm enabledPlatforms={getEnabledPlatforms(userDoc!)} />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 bg-slate-300 dark:bg-slate-700 border-2 border-slate-500 dark:border-slate-800 rounded-lg p-2">
         <div className="flex flex-col items-center place-content-center">
           <h1 className="font-semibold text-xl">Current status:</h1>
@@ -82,4 +83,12 @@ export function UserProfile({ session, showGear }: { session: Session | null, sh
       {showGear && <Link href={"/settings"} className="flex w-fit h-fit p-2 hover:text-sky-500 bg-slate-300 dark:bg-slate-700 border-2 border-slate-500 dark:border-slate-800 rounded-full"><FontAwesomeIcon icon={faGear} /></Link>}
     </div>
   );
+}
+
+function getEnabledPlatforms(userDoc: UserDoc): Platform[] {
+  const enabledPlatforms: Platform[] = [];
+  if (userDoc.githubToken) enabledPlatforms.push("github");
+  if (userDoc.statusCafeCookie) enabledPlatforms.push("status.cafe");
+  if (userDoc.slackToken) enabledPlatforms.push("slack");
+  return enabledPlatforms;
 }

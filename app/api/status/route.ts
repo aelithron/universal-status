@@ -1,7 +1,7 @@
 import { auth } from "@/auth";
 import { Platform, PlatformError, UserDoc } from "@/universalstatus";
 import client, { getUserDoc } from "@/utils/db";
-import { updateGithub, updateSlack } from "@/utils/platforms";
+import { updateGithub, updateSlack, updateStatusCafe } from "@/utils/platforms";
 import getSelectablePlatforms from "@/utils/selectablePlatforms";
 import { Emoji } from "emoji-type";
 import { NextRequest, NextResponse } from "next/server";
@@ -57,13 +57,17 @@ export async function POST(req: NextRequest) {
   console.log(`User ${session.user.email} - ${emoji} ${status} (at ${setAt.toTimeString()})`);
 
   const platformErrors: PlatformError[] = [];
-  if (platforms.includes("slack")) {
-    const slackUpdate = await updateSlack(session.user.email, status, emoji);
-    if (slackUpdate.error) platformErrors.push({ platform: "slack", message: slackUpdate.message });
-  }
   if (platforms.includes("github")) {
     const githubUpdate = await updateGithub(session.user.email, status, emoji);
     if (githubUpdate.error) platformErrors.push({ platform: "github", message: githubUpdate.message });
+  }
+  if (platforms.includes("status.cafe")) {
+    const statusCafeUpdate = await updateStatusCafe(session.user.email, status, emoji);
+    if (statusCafeUpdate.error) platformErrors.push({ platform: "status.cafe", message: statusCafeUpdate.message });
+  }
+  if (platforms.includes("slack")) {
+    const slackUpdate = await updateSlack(session.user.email, status, emoji);
+    if (slackUpdate.error) platformErrors.push({ platform: "slack", message: slackUpdate.message });
   }
 
   return NextResponse.json({ message: "Set status successfully!", platform_errors: platformErrors });

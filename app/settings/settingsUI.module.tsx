@@ -64,3 +64,34 @@ export function GitHubRemoveButton() {
   }
   return <button onClick={() => removeGitHubToken()} className="bg-red-500 border-2 border-slate-500 dark:border-slate-800 rounded-xl p-1 hover:text-sky-500"><FontAwesomeIcon icon={faMinusCircle} /> Remove</button>
 }
+
+export function StatusCafeAuthorizeButton({ isAuthorized }: { isAuthorized: boolean }) {
+  return (
+    <a href={`/settings/statuscafe`} className="hover:text-sky-500 bg-slate-300 dark:bg-slate-700 border-2 border-slate-500 dark:border-slate-800 rounded-xl p-1">
+      <FontAwesomeIcon icon={faArrowRightToBracket} /> {isAuthorized ? "Reauthorize" : "Authorize"}
+    </a>
+  )
+}
+export function StatusCafeRemoveButton() {
+  const router = useRouter();
+  function removeStatusCafeToken() {
+    fetch(`/api/provider/statuscafe`, { method: "DELETE" })
+      .then((res) => {
+        if (!res) return null;
+        try {
+          const json = res.json();
+          return json;
+        } catch {
+          return null;
+        }
+      })
+      .then((res) => {
+        if (!res) {
+          alert(`Error removing your token!`);
+          return;
+        }
+        router.refresh();
+      })
+  }
+  return <button onClick={() => removeStatusCafeToken()} className="bg-red-500 border-2 border-slate-500 dark:border-slate-800 rounded-xl p-1 hover:text-sky-500"><FontAwesomeIcon icon={faMinusCircle} /> Remove</button>
+}

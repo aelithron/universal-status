@@ -1,5 +1,5 @@
 import { Platform } from "@/universalstatus";
 
 export default function getSelectablePlatforms(): Platform[] {
-  return ["slack", "github"]; // add "discord" and "status.cafe" when implemented :3
+  return ["github", "status.cafe", "slack"]; // add "discord" when implemented :3
 }
