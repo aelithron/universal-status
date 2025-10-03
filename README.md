@@ -1,6 +1,8 @@
 # universal-status
 Put your status on many platforms at once :3
 
+![IMG](https://hackatime-badge.hackclub.com/U08RJ1PEM7X/universal-status)
+
 <div align="center">
   <a href="https://shipwrecked.hackclub.com/?t=ghrm" target="_blank">
     <img src="https://hc-cdn.hel1.your-objectstorage.com/s/v3/739361f1d440b17fc9e2f74e49fc185d86cbec14_badge.png" 
