@@ -22,8 +22,8 @@
     "graphql": "^16.11.0",
     "jsdom": "^27.0.0",
     "mongodb": "^6.18.0",
-    "next": "15.4.5",
-    "next-auth": "^5.0.0-beta.29",
+    "next": "15.5.7",
+    "next-auth": "^5.0.0-beta.30",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "rxjs": "^7.8.2"
