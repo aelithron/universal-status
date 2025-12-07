@@ -21,8 +21,8 @@ export async function GET(req: NextRequest) {
     },
     body: new URLSearchParams({
       code: slackTempCode,
-      client_id: process.env.AUTH_SLACK_ID!,
-      client_secret: process.env.AUTH_SLACK_SECRET!,
+      client_id: process.env.SLACK_ID!,
+      client_secret: process.env.SLACK_SECRET!,
       redirect_uri: `${process.env.AUTH_URL}/api/provider/slack`
     }).toString()
   });
