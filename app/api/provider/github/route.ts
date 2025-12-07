@@ -21,8 +21,8 @@ export async function GET(req: NextRequest) {
     },
     body: new URLSearchParams({
       code: githubTempCode,
-      client_id: process.env.GITHUB_ID!,
-      client_secret: process.env.GITHUB_SECRET!,
+      client_id: process.env.AUTH_GITHUB_ID!,
+      client_secret: process.env.AUTH_GITHUB_SECRET!,
     }).toString()
   });
   if (!githubRes) return NextResponse.json({ error: "get_token_failed", message: "Failed to get the GitHub authorization token, make sure the code is correct!" }, { status: 500 });

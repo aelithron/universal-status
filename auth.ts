@@ -1,6 +1,7 @@
 import NextAuth from "next-auth"
 import Discord from "next-auth/providers/discord";
 import Slack from "next-auth/providers/slack";
+import GitHub from "next-auth/providers/github";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   theme: {
@@ -36,6 +37,18 @@ function providers() {
           name: profile.name,
           email: profile.email,
           image: null,
+        }
+      }
+    }));
+  }
+  if (process.env.AUTH_GITHUB_ID && process.env.AUTH_GITHUB_SECRET) {
+    providers.push(GitHub({
+      profile(profile) {
+        return {
+          id: profile.id.toString(),
+          name: profile.name,
+          email: profile.email,
+          image: profile.avatar_url,
         }
       }
     }));

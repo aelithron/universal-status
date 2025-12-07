@@ -36,7 +36,7 @@ export default async function Page() {
         <div className="flex flex-col md:flex-row md:justify-between gap-4 md:gap-8 items-center bg-slate-300 dark:bg-slate-700 border-2 border-slate-500 dark:border-slate-800 rounded-xl p-1 px-2">
           <h3 className="text-xl"><FontAwesomeIcon icon={faGithub} /> GitHub</h3>
           <div className="flex items-center gap-3">
-            <GitHubAuthorizeButton clientID={process.env.GITHUB_ID} authURL={process.env.AUTH_URL} isAuthorized={userDoc.githubToken ? true : false} />
+            <GitHubAuthorizeButton clientID={process.env.AUTH_GITHUB_ID} authURL={process.env.AUTH_URL} isAuthorized={userDoc.githubToken ? true : false} />
             {userDoc.githubToken && <GitHubRemoveButton />}
           </div>
         </div>
