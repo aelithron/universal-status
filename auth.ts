@@ -17,8 +17,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
 function providers() {
   const providers = []
-  if (process.env.AUTH_DISCORD_ID && process.env.AUTH_DISCORD_SECRET) {
+  if (process.env.DISCORD_ID && process.env.DISCORD_SECRET) {
     providers.push(Discord({
+      clientId: process.env.DISCORD_ID,
+      clientSecret: process.env.DISCORD_SECRET,
       profile(profile) {
         return {
           id: profile.id,
@@ -29,20 +31,24 @@ function providers() {
       }
     }));
   }
-  if (process.env.AUTH_SLACK_ID && process.env.AUTH_SLACK_SECRET) {
+  if (process.env.SLACK_ID && process.env.SLACK_SECRET) {
     providers.push(Slack({
+      clientId: process.env.SLACK_ID,
+      clientSecret: process.env.SLACK_SECRET,
       profile(profile) {
         return {
           id: profile.sub,
           name: profile.name,
           email: profile.email,
-          image: null,
+          image: null
         }
       }
     }));
   }
-  if (process.env.AUTH_GITHUB_ID && process.env.AUTH_GITHUB_SECRET) {
+  if (process.env.GITHUB_ID && process.env.GITHUB_SECRET) {
     providers.push(GitHub({
+      clientId: process.env.GITHUB_ID,
+      clientSecret: process.env.GITHUB_SECRET,
       profile(profile) {
         return {
           id: profile.id.toString(),
