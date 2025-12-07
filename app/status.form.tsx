@@ -46,7 +46,7 @@ export default function StatusForm({ enabledPlatforms }: { enabledPlatforms: Pla
         }
         alert("Successfully set status!");
         if (res.platform_errors) {
-          for (const error of res.platform_errors as PlatformError[]) {
+          for (const error of res.platformErrors as PlatformError[]) {
             alert(`Platform Error (${error.platform}): ${error.message}`);
           }
         }

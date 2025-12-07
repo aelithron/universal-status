@@ -43,5 +43,5 @@ export async function POST(req: NextRequest) {
   const userDoc = await getUserDoc(session.user.email);
   if (!userDoc) return NextResponse.json({ error: "invalid_user", message: "The provided user doesn't exist, try logging back in." }, { status: 400 });
   const platformErrors = await changeStatus(userDoc, platforms, (body.status as string).trim(), (body.emoji as string).trim() as Emoji);
-  return NextResponse.json({ message: "Set status successfully!", platform_errors: platformErrors });
+  return NextResponse.json({ message: "Set status successfully!", platformErrors });
 }

@@ -25,11 +25,19 @@ const typeDefs = gql`
     emoji: String
     setAt: String
   }
+  type PlatformError {
+    platform: String!
+    message: String!
+  }
+  type SetStatusResult {
+    status: Status!
+    platformErrors: [String!]!
+  }
   type Query {
     info(email: String): Status
   }
   type Mutation {
-    setStatus(status: String!, emoji: String!, platforms: [String]): [String]
+    setStatus(status: String!, emoji: String!, platforms: [String]): SetStatusResult
   }
 `;
 
@@ -54,5 +62,5 @@ async function setStatus(status: string, emoji: string, platforms: Platform[]) {
   const userDoc = await getUserDoc(session.user.email);
   if (!userDoc) throw new GraphQLError("The provided user doesn't exist, try logging back in.", { extensions: { code: "INVALID_USER" } });
   const platformErrors = await changeStatus(userDoc, platforms, status.trim(), emoji.trim() as Emoji);
-  return { platform_errors: platformErrors };
+  return { status: userDoc.status, platformErrors: platformErrors };
 }
