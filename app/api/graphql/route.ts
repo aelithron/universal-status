@@ -4,10 +4,11 @@ import { gql } from 'graphql-tag';
 import { NextRequest } from 'next/server';
 import { auth } from '@/auth';
 import { getUserDoc } from '@/utils/db';
+import { GraphQLError } from 'graphql/error';
 
 const resolvers = {
   Query: {
-    info: (email: string | undefined) => getStatus(email)
+    info: (_: unknown, args: { email: string | undefined }) => getStatus(args.email)
   }
 };
 
@@ -28,12 +29,11 @@ export { handler as GET, handler as POST };
 
 async function getStatus(email: string | undefined) {
   const session = await auth();
-  if (!email && session && session.user && session.user.email) {
-    email = session.user.email;
-  } else {
-    return;
+  if (!email && session?.user?.email) email = session.user.email;
+  if (!email) {
+    throw new GraphQLError("The request didn't contain an email, and was made while signed out.", { extensions: { code: "MISSING_EMAIL" } });
   }
   const userStatus = await getUserDoc(email);
-  if (!userStatus) return `{ error: "invalid_user", message: "The provided user doesn't exist." }`;
-  return userStatus.status
+  if (!userStatus) throw new GraphQLError("The provided user doesn't exist.", { extensions: { code: "INVALID_USER" } });
+  return { status: userStatus.status.status, emoji: userStatus.status.emoji, setAt: new Date(userStatus.status.setAt).toString() };
 }
