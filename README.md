@@ -22,7 +22,7 @@ Put your status on many platforms at once :3
   - Discord (via [Rich Presence](https://github.com/aelithron/universal-status-discord))
   - possibly others
 ## Usage
-The app is quite easy to use! Go to [status.novatea.dev](https://status.novatea.dev) and sign in with either Discord (suggested) GitHub, or (only if you are in Hack Club) Slack. Then, if you want to store status updates on other platforms, go to the Settings page and authorize accounts on other platforms.
+The app is quite easy to use! Go to [status.novatea.dev](https://status.novatea.dev) and sign in with either Discord (suggested), GitHub, or (only if you are in Hack Club) Slack. Then, if you want to store status updates on other platforms, go to the Settings page and authorize accounts on other platforms.
 ### Selfhosting
 Selfhosting the app is a bit more complex, but can be done! I suggest using Docker, though I am sadly unable to provide a prebuilt image for now.
 1. Set up the following environment variables:
