@@ -16,15 +16,15 @@ export async function changeStatus(userDoc: UserDoc, platforms: Platform[], stat
     console.log(`User ${userDoc.user} - ${emoji} ${status} (at ${setAt.toTimeString()})`);
   
     const platformErrors: PlatformError[] = [];
-    if (platforms.includes("github")) {
+    if (platforms.includes("github") && userDoc.githubToken) {
       const githubUpdate = await updateGithub(userDoc.user, status, emoji);
       if (githubUpdate.error) platformErrors.push({ platform: "github", message: githubUpdate.message });
     }
-    if (platforms.includes("status.cafe")) {
+    if (platforms.includes("status.cafe") && userDoc.statusCafeCookie && userDoc.statusCafeCSRF) {
       const statusCafeUpdate = await updateStatusCafe(userDoc.user, status, emoji);
       if (statusCafeUpdate.error) platformErrors.push({ platform: "status.cafe", message: statusCafeUpdate.message });
     }
-    if (platforms.includes("slack")) {
+    if (platforms.includes("slack") && userDoc.slackToken) {
       const slackUpdate = await updateSlack(userDoc.user, status, emoji);
       if (slackUpdate.error) platformErrors.push({ platform: "slack", message: slackUpdate.message });
     }
