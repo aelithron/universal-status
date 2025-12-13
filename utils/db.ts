@@ -10,7 +10,7 @@ const options = {
   },
 }
 if (!uri) throw new Error("No MONGODB_URI environment variable.");
- 
+
 let client: MongoClient;
 if (process.env.NODE_ENV === "development") {
   // eslint-disable-next-line prefer-const
@@ -27,10 +27,10 @@ if (process.env.NODE_ENV === "development") {
 export default client;
 
 export async function createUserDoc(user: string): Promise<UserDoc | null> {
-  const userDoc: UserDoc = { 
+  const userDoc: UserDoc = {
     _id: new ObjectId(),
     user: user,
-    status: { status: "Just joined Universal Status!", emoji: "✨", setAt: new Date() },
+    status: { status: "Just joined Universal Status!", emoji: "✨", expiry: null, setAt: new Date() },
     previousStatuses: [],
     slackToken: null,
     githubToken: null,
@@ -41,5 +41,17 @@ export async function createUserDoc(user: string): Promise<UserDoc | null> {
   return userDoc;
 }
 export async function getUserDoc(user: string): Promise<UserDoc | null> {
-  return await client.db(process.env.MONGODB_DB).collection<UserDoc>("statuses").findOne({ user });
+  const userDoc = await client.db(process.env.MONGODB_DB).collection<UserDoc>("statuses").findOne({ user });
+  if (userDoc && userDoc.status.expiry && new Date(userDoc?.status.expiry) <= new Date()) {
+    const oldStatuses = userDoc.previousStatuses;
+    oldStatuses.push(userDoc.status);
+    await client.db(process.env.MONGODB_DB).collection<UserDoc>("statuses").updateOne({ user: userDoc.user }, {
+      $set: {
+        status: { status: "No status set.", emoji: "✨", expiry: null, setAt: new Date() },
+        previousStatuses: oldStatuses
+      },
+    });
+    userDoc.status = { status: "No status set.", emoji: "✨", expiry: null, setAt: new Date() };
+  }
+  return userDoc;
 }

@@ -7,6 +7,13 @@
 			"problemMatcher": [],
 			"label": "npm: dev",
 			"detail": "next dev --turbopack"
+		},
+		{
+			"type": "npm",
+			"script": "lint",
+			"problemMatcher": [],
+			"label": "npm: lint",
+			"detail": "eslint ."
 		}
 	]
 }

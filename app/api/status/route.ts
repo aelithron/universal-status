@@ -34,6 +34,7 @@ export async function POST(req: NextRequest) {
   if (!body) return NextResponse.json({ error: "invalid_body", message: "The request has an invalid or missing body!" }, { status: 400 });
   if (!body.status || (body.status as string).trim().length < 1) return NextResponse.json({ error: "missing_status", message: "The request was missing a 'status' parameter!" }, { status: 400 });
   if (!body.emoji || (body.emoji as string).trim().length < 1) return NextResponse.json({ error: "missing_emoji", message: "The request was missing an 'emoji' parameter!" }, { status: 400 });
+  if (body.expiry && (isNaN(new Date(body.expiry).valueOf()) || new Date(body.expiry) < new Date())) return NextResponse.json({ error: "invalid_expiry", message: "An 'expiry' parameter was in the request, but it was not valid!" }, { status: 400 });
   let platforms: Platform[] = [];
   if (body.platforms) {
     platforms = body.platforms;
@@ -42,6 +43,6 @@ export async function POST(req: NextRequest) {
   }
   const userDoc = await getUserDoc(session.user.email);
   if (!userDoc) return NextResponse.json({ error: "invalid_user", message: "The provided user doesn't exist, try logging back in." }, { status: 400 });
-  const platformErrors = await changeStatus(userDoc, platforms, (body.status as string).trim(), (body.emoji as string).trim() as Emoji);
+  const platformErrors = await changeStatus(userDoc, platforms, (body.status as string).trim(), (body.emoji as string).trim() as Emoji, body.expiry ? new Date((body.expiry as string).trim()) : null);
   return NextResponse.json({ message: "Set status successfully!", platformErrors });
 }

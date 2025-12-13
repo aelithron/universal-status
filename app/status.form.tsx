@@ -1,25 +1,26 @@
 "use client";
 import { Platform, PlatformError } from "@/universalstatus";
 import getSelectablePlatforms from "@/utils/selectablePlatforms";
-import { faArrowRight, faBorderAll } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRight, faBorderAll, faClock } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import EmojiPicker, { EmojiClickData, Theme } from "emoji-picker-react";
 import { Emoji } from "emoji-type";
 import { useRouter } from "next/navigation";
-import { Dispatch, FormEvent, SetStateAction, useState } from "react";
+import { Dispatch, FormEvent, SetStateAction, useMemo, useState } from "react";
 
 export default function StatusForm({ enabledPlatforms }: { enabledPlatforms: Platform[] }) {
   const router = useRouter();
   const allPlatforms = getSelectablePlatforms();
   const [status, setStatus] = useState<string>("");
+  type DialogTypes = "emoji" | "platforms" | "expiry";
+  const [openDialog, setOpenDialog] = useState<DialogTypes | null>(null);
   const [emoji, setEmoji] = useState<Emoji>("🙂");
-  const [emojiPickerOpen, setEmojiPickerOpen] = useState<boolean>(false);
   const [platforms, setPlatforms] = useState<Platform[]>(enabledPlatforms);
-  const [platformsOpen, setPlatformsOpen] = useState<boolean>(false);
+  const [expiry, setExpiry] = useState<Date | null>(null);
 
   function selectEmoji(e: EmojiClickData) {
     setEmoji(e.emoji as Emoji);
-    setEmojiPickerOpen(false);
+    setOpenDialog(null);
   }
 
   function handleSubmit(e: FormEvent) {
@@ -28,7 +29,7 @@ export default function StatusForm({ enabledPlatforms }: { enabledPlatforms: Pla
       alert("Enter a status...");
       return;
     }
-    fetch("/api/status", { method: "POST", body: JSON.stringify({ status: status, emoji: emoji, platforms: platforms }) })
+    fetch("/api/status", { method: "POST", body: JSON.stringify({ status, emoji, platforms, expiry }) })
       .then((res) => {
         if (!res) return null;
         let jsonRes = null;
@@ -45,30 +46,37 @@ export default function StatusForm({ enabledPlatforms }: { enabledPlatforms: Pla
           return;
         }
         alert("Successfully set status!");
-        if (res.platform_errors) {
-          for (const error of res.platformErrors as PlatformError[]) {
-            alert(`Platform Error (${error.platform}): ${error.message}`);
-          }
-        }
+        if (res.platformErrors) for (const error of res.platformErrors as PlatformError[]) alert(`Platform Error (${error.platform}): ${error.message}`);
         setStatus("");
         setEmoji("🙂");
-        setEmojiPickerOpen(false);
+        setOpenDialog(null);
         router.refresh();
       });
   }
   // i have to repeat these styles so much that i put them here
   const fieldStyles = "bg-slate-300 dark:bg-slate-700 rounded-xl p-1 border-2 border-slate-500 dark:border-slate-800";
+  function changeDialog(dialog: DialogTypes) {
+    if (openDialog === dialog) {
+      setOpenDialog(null);
+      return;
+    }
+    setOpenDialog(dialog);
+  }
   return (
     <form className="flex flex-col gap-1 mt-4" onSubmit={handleSubmit}>
       <label className="text-sm font-semibold text-center">New Status</label>
-      <div className="flex gap-2">
-        <input type="text" value={status} onChange={(e) => setStatus(e.target.value)} className={fieldStyles} />
-        <button type="button" className={`${fieldStyles} hover:text-sky-500`} onClick={() => setEmojiPickerOpen(!emojiPickerOpen)}>{emoji}</button>
-        <button type="button" className={`${fieldStyles} hover:text-sky-500`} onClick={() => setPlatformsOpen(!platformsOpen)}><FontAwesomeIcon icon={faBorderAll} /></button>
-        <button type="submit" className={`${fieldStyles} hover:text-sky-500`}><FontAwesomeIcon icon={faArrowRight} /></button>
+      <div className="flex flex-col items-center gap-2">
+        <input type="text" value={status} onChange={(e) => setStatus(e.target.value)} className={fieldStyles} placeholder="Enter a status..." />
+        <div className="flex gap-2">
+          <button type="button" className={`${fieldStyles} hover:text-sky-500`} onClick={() => changeDialog("emoji")}>{emoji}</button>
+          <button type="button" className={`${fieldStyles} hover:text-sky-500`} onClick={() => changeDialog("platforms")}><FontAwesomeIcon icon={faBorderAll} /></button>
+          <button type="button" className={`${fieldStyles} hover:text-sky-500`} onClick={() => changeDialog("expiry")}><FontAwesomeIcon icon={faClock} /></button>
+          <button type="submit" className={`${fieldStyles} hover:text-sky-500`}><FontAwesomeIcon icon={faArrowRight} /></button>
+        </div>
       </div>
-      {emojiPickerOpen && <div className="flex items-center absolute mt-18"><EmojiPicker onEmojiClick={(e) => selectEmoji(e)} theme={Theme.AUTO} /></div>}
-      {platformsOpen && <div className="flex items-center absolute mt-18 md:ml-64"><PlatformSelector platforms={platforms} setPlatforms={setPlatforms} allPlatforms={allPlatforms} /></div>}
+      {openDialog === "emoji" && <div className="flex items-center absolute mt-27"><EmojiPicker onEmojiClick={(e) => selectEmoji(e)} theme={Theme.AUTO} /></div>}
+      {openDialog === "platforms" && <div className="flex items-center absolute mt-27"><PlatformSelector platforms={platforms} setPlatforms={setPlatforms} allPlatforms={allPlatforms} /></div>}
+      {openDialog === "expiry" && <div className="flex items-center absolute mt-27"><ExpirySelector expiry={expiry} setExpiry={setExpiry} /></div>}
     </form>
   )
 }
@@ -95,6 +103,25 @@ function PlatformSelector({ platforms, setPlatforms, allPlatforms }: { platforms
       </label>)}
     </div>
   )
+}
+
+function ExpirySelector({ expiry, setExpiry }: { expiry: Date | null, setExpiry: Dispatch<SetStateAction<Date | null>> }) {
+  function getFormattedTime(baseDate?: Date | null): string {
+    if (baseDate === null) return "";
+    let date = new Date();
+    if (baseDate !== undefined) date = baseDate;
+    const offset = date.getTimezoneOffset() * 60000;
+    return new Date(date.getTime() - offset).toISOString().slice(0, 16);
+  }
+  const formattedExpiry = useMemo(() => getFormattedTime(expiry), [expiry]);
+  const minTime = useMemo(() => getFormattedTime(), []);
+  return (
+    <div className="flex flex-col bg-slate-300 dark:bg-slate-700 rounded-xl border-2 border-slate-500 dark:border-slate-800 p-4 gap-2">
+      <h1 className="font-semibold text-lg">Expiry</h1>
+      <p>(empty date means it won&apos;t expire)</p>
+      <input type="datetime-local" className="border-2 border-slate-300 dark:border-slate-800 p-1 rounded-lg" value={formattedExpiry} min={minTime} onChange={(e) => setExpiry(e.target.value ? new Date(e.target.value) : null)} />
+    </div>
+  );
 }
 
 export function StatusTime({ setAt }: { setAt: Date }) {

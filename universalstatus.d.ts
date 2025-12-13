@@ -4,6 +4,7 @@ import { ObjectId } from "mongodb";
 export type Status = {
   status: string;
   emoji: Emoji;
+  expiry: Date | null;
   setAt: Date;
 }
 export type UserDoc = {
