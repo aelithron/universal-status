@@ -44,7 +44,12 @@ const typeDefs = gql`
 
 const server = new ApolloServer({ resolvers, typeDefs });
 const handler = startServerAndCreateNextHandler<NextRequest>(server, { context: async req => ({ req }) });
-export { handler as GET, handler as POST };
+export async function GET(request: NextRequest) {
+  return handler(request);
+}
+export async function POST(request: NextRequest) {
+  return handler(request);
+}
 
 async function getStatus(email: string | undefined) {
   const session = await auth();
