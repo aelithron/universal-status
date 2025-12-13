@@ -40,7 +40,7 @@ Selfhosting the app is a bit more complex, but can be done! I suggest using Dock
 2. Build a Docker image for the app. To make sure the build goes smoothly, add a file in the source code directory called `.env.local` with the text `MONGODB_URI=[your connection string]`. Then, I suggest running `docker build -t universal-status:v1.4.0 .` from the same directory.
 3. Run the image with either a `docker run` command or Docker Compose. If you're so inclined, you can use Kubernetes also. Make sure to include the environment variables!
 ## Screenshot
-![IMG](https://hc-cdn.hel1.your-objectstorage.com/s/v3/8c39a7bc4836269f0e759571330e5c635b48b03b_image.png)
+![IMG](https://hc-cdn.hel1.your-objectstorage.com/s/v3/9154f332f0b0e82d_image.png)
 ## Credits
 - Inspired by EchoFeed and Status.Cafe
 - Icons from Font Awesome
