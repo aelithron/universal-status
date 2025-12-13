@@ -10,7 +10,7 @@ export async function changeStatus(userDoc: UserDoc, platforms: Platform[], stat
     oldStatuses.push(userDoc.status);
     await client.db(process.env.MONGODB_DB).collection<UserDoc>("statuses").updateOne({ user: userDoc.user }, {
       $set: {
-        status: { status, emoji, setAt },
+        status: { status, emoji, expiry, setAt },
         previousStatuses: oldStatuses
       },
     });
