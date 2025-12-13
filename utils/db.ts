@@ -42,7 +42,7 @@ export async function createUserDoc(user: string): Promise<UserDoc | null> {
 }
 export async function getUserDoc(user: string): Promise<UserDoc | null> {
   const userDoc = await client.db(process.env.MONGODB_DB).collection<UserDoc>("statuses").findOne({ user });
-  if (userDoc?.status.expiry && new Date(userDoc?.status.expiry) <= new Date()) {
+  if (userDoc && userDoc.status.expiry && new Date(userDoc?.status.expiry) <= new Date()) {
     const oldStatuses = userDoc.previousStatuses;
     oldStatuses.push(userDoc.status);
     await client.db(process.env.MONGODB_DB).collection<UserDoc>("statuses").updateOne({ user: userDoc.user }, {
