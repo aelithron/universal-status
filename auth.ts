@@ -9,10 +9,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
   providers: providers(),
   callbacks: {
-    authorized: async ({ auth }) => {
-      return !!auth
-    },
-  },
+    authorized: async ({ request, auth }) => { 
+      if (!auth && request.nextUrl.pathname !== "/") {
+        return !!auth; 
+      } else return true; 
+    }
+  }
 });
 
 function providers() {
