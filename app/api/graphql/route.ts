@@ -15,14 +15,15 @@ const resolvers = {
     info: (_: unknown, args: { email: string | undefined }) => getStatus(args.email)
   },
   Mutation: {
-    setStatus: (_: unknown, args: { status: string, emoji: string, platforms: Platform[] }) => setStatus(args.status, args.emoji, args.platforms)
+    setStatus: (_: unknown, args: { status: string, emoji: string, expiry: string | null | undefined, platforms: Platform[] }) => setStatus(args.status, args.emoji, args.expiry, args.platforms)
   }
 };
 
 const typeDefs = gql`
   type Status {
-    status: String
-    emoji: String
+    status: String!
+    emoji: String!
+    expiry: String
     setAt: String
   }
   type PlatformError {
@@ -37,7 +38,7 @@ const typeDefs = gql`
     info(email: String): Status
   }
   type Mutation {
-    setStatus(status: String!, emoji: String!, platforms: [String]): SetStatusResult
+    setStatus(status: String!, emoji: String!, expiry: String, platforms: [String]): SetStatusResult
   }
 `;
 
@@ -54,14 +55,15 @@ async function getStatus(email: string | undefined) {
   return userStatus.status;
 }
 
-async function setStatus(status: string, emoji: string, platforms: Platform[]): Promise<{ status: Status, platformErrors: string[] }> {
+async function setStatus(status: string, emoji: string, expiry: string | null | undefined, platforms: Platform[]): Promise<{ status: Status, platformErrors: string[] }> {
   const session = await auth();
   if (!session || !session.user) throw new GraphQLError("Not logged in, please log in to continue.", { extensions: { code: "UNAUTHORIZED" } });
   if (!session.user.email) throw new GraphQLError("You don't have an email in your profile, try logging back in.", { extensions: { code: "INVALID_PROFILE" } });
+  if (expiry && (isNaN(new Date(expiry).valueOf()) || new Date(expiry) < new Date())) throw new GraphQLError("An 'expiry' parameter was in the request, but it was not valid!", { extensions: { code: "INVALID_EXPIRY" } })
   if (!platforms) platforms = getSelectablePlatforms();
   const userDoc = await getUserDoc(session.user.email);
   if (!userDoc) throw new GraphQLError("The provided user doesn't exist, try logging back in.", { extensions: { code: "INVALID_USER" } });
-  const platformErrorsRaw = await changeStatus(userDoc, platforms, status.trim(), emoji.trim() as Emoji);
+  const platformErrorsRaw = await changeStatus(userDoc, platforms, status.trim(), emoji.trim() as Emoji, expiry ? new Date(expiry.trim()) : null);
   const platformErrors: string[] = [];
   for (const error of platformErrorsRaw) platformErrors.push(`${error.platform}: ${error.message}`);
   return { status: userDoc.status, platformErrors: platformErrors };

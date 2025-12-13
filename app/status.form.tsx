@@ -29,7 +29,7 @@ export default function StatusForm({ enabledPlatforms }: { enabledPlatforms: Pla
       alert("Enter a status...");
       return;
     }
-    fetch("/api/status", { method: "POST", body: JSON.stringify({ status: status, emoji: emoji, platforms: platforms }) })
+    fetch("/api/status", { method: "POST", body: JSON.stringify({ status, emoji, platforms, expiry }) })
       .then((res) => {
         if (!res) return null;
         let jsonRes = null;
@@ -66,7 +66,7 @@ export default function StatusForm({ enabledPlatforms }: { enabledPlatforms: Pla
     <form className="flex flex-col gap-1 mt-4" onSubmit={handleSubmit}>
       <label className="text-sm font-semibold text-center">New Status</label>
       <div className="flex flex-col items-center gap-2">
-        <input type="text" value={status} onChange={(e) => setStatus(e.target.value)} className={fieldStyles} />
+        <input type="text" value={status} onChange={(e) => setStatus(e.target.value)} className={fieldStyles} placeholder="Enter a status..." />
         <div className="flex gap-2">
           <button type="button" className={`${fieldStyles} hover:text-sky-500`} onClick={() => changeDialog("emoji")}>{emoji}</button>
           <button type="button" className={`${fieldStyles} hover:text-sky-500`} onClick={() => changeDialog("platforms")}><FontAwesomeIcon icon={faBorderAll} /></button>
