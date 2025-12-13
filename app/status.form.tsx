@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import EmojiPicker, { EmojiClickData, Theme } from "emoji-picker-react";
 import { Emoji } from "emoji-type";
 import { useRouter } from "next/navigation";
-import { Dispatch, FormEvent, SetStateAction, useState } from "react";
+import { Dispatch, FormEvent, SetStateAction, useMemo, useState } from "react";
 
 export default function StatusForm({ enabledPlatforms }: { enabledPlatforms: Platform[] }) {
   const router = useRouter();
@@ -106,9 +106,20 @@ function PlatformSelector({ platforms, setPlatforms, allPlatforms }: { platforms
 }
 
 function ExpirySelector({ expiry, setExpiry }: { expiry: Date | null, setExpiry: Dispatch<SetStateAction<Date | null>> }) {
+  function getFormattedTime(baseDate?: Date | null): string {
+    if (baseDate === null) return "";
+    let date = new Date();
+    if (baseDate !== undefined) date = baseDate;
+    const offset = date.getTimezoneOffset() * 60000;
+    return new Date(date.getTime() - offset).toISOString().slice(0, 16);
+  }
+  const formattedExpiry = useMemo(() => getFormattedTime(expiry), [expiry]);
+  const minTime = useMemo(() => getFormattedTime(), []);
   return (
-    <div className="flex flex-col bg-slate-300 dark:bg-slate-700 rounded-xl border-2 border-slate-500 dark:border-slate-800 p-4">
-        
+    <div className="flex flex-col bg-slate-300 dark:bg-slate-700 rounded-xl border-2 border-slate-500 dark:border-slate-800 p-4 gap-2">
+      <h1 className="font-semibold text-lg">Expiry</h1>
+      <p>(empty date means it won&apos;t expire)</p>
+      <input type="datetime-local" className="border-2 border-slate-300 dark:border-slate-800 p-1 rounded-lg" value={formattedExpiry} min={minTime} onChange={(e) => setExpiry(e.target.value ? new Date(e.target.value) : null)} />
     </div>
   );
 }
