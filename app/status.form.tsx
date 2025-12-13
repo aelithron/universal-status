@@ -20,7 +20,7 @@ export default function StatusForm({ enabledPlatforms }: { enabledPlatforms: Pla
 
   function selectEmoji(e: EmojiClickData) {
     setEmoji(e.emoji as Emoji);
-    setOpenDialog(null)
+    setOpenDialog(null);
   }
 
   function handleSubmit(e: FormEvent) {
