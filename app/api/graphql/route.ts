@@ -24,7 +24,7 @@ const typeDefs = gql`
     status: String!
     emoji: String!
     expiry: String
-    setAt: String
+    setAt: String!
   }
   type PlatformError {
     platform: String!
