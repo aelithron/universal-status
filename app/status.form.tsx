@@ -1,7 +1,7 @@
 "use client";
 import { Platform, PlatformError } from "@/universalstatus";
 import getSelectablePlatforms from "@/utils/selectablePlatforms";
-import { faArrowRight, faBorderAll, faClock } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRight, faBorderAll, faClock, faSync } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import EmojiPicker, { EmojiClickData, Theme } from "emoji-picker-react";
 import { Emoji } from "emoji-type";
@@ -17,7 +17,7 @@ export default function StatusForm({ enabledPlatforms }: { enabledPlatforms: Pla
   const [emoji, setEmoji] = useState<Emoji>("🙂");
   const [platforms, setPlatforms] = useState<Platform[]>(enabledPlatforms);
   const [expiry, setExpiry] = useState<Date | null>(null);
-
+  const [isLoading, setLoading] = useState<boolean>(false);
   function selectEmoji(e: EmojiClickData) {
     setEmoji(e.emoji as Emoji);
     setOpenDialog(null);
@@ -29,6 +29,7 @@ export default function StatusForm({ enabledPlatforms }: { enabledPlatforms: Pla
       alert("Enter a status...");
       return;
     }
+    setLoading(true);
     fetch("/api/status", { method: "POST", body: JSON.stringify({ status, emoji, platforms, expiry }) })
       .then((res) => {
         if (!res) return null;
@@ -49,6 +50,8 @@ export default function StatusForm({ enabledPlatforms }: { enabledPlatforms: Pla
         if (res.platformErrors) for (const error of res.platformErrors as PlatformError[]) alert(`Platform Error (${error.platform}): ${error.message}`);
         setStatus("");
         setEmoji("🙂");
+        setExpiry(null);
+        setLoading(false);
         setOpenDialog(null);
         router.refresh();
       });
@@ -71,7 +74,7 @@ export default function StatusForm({ enabledPlatforms }: { enabledPlatforms: Pla
           <button type="button" className={`${fieldStyles} hover:text-sky-500`} onClick={() => changeDialog("emoji")}>{emoji}</button>
           <button type="button" className={`${fieldStyles} hover:text-sky-500`} onClick={() => changeDialog("platforms")}><FontAwesomeIcon icon={faBorderAll} /></button>
           <button type="button" className={`${fieldStyles} hover:text-sky-500`} onClick={() => changeDialog("expiry")}><FontAwesomeIcon icon={faClock} /></button>
-          <button type="submit" className={`${fieldStyles} hover:text-sky-500`}><FontAwesomeIcon icon={faArrowRight} /></button>
+          <button type="submit" className={`${fieldStyles} ${isLoading ? "bg-slate-400 dark:bg-slate-800 text-slate-600 dark:text-slate-400 dark:border-slate-900" : "hover:text-sky-500"}`} disabled={isLoading}><FontAwesomeIcon icon={isLoading ? faSync : faArrowRight} /></button>
         </div>
       </div>
       {openDialog === "emoji" && <div className="flex items-center absolute mt-27"><EmojiPicker onEmojiClick={(e) => selectEmoji(e)} theme={Theme.AUTO} /></div>}
