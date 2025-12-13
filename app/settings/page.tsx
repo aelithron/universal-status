@@ -1,7 +1,7 @@
 import { faCoffee, faGear, faHome } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
-import { UserProfile } from "../page";
+import { UserProfile } from "../home";
 import { auth } from "@/auth";
 import { getUserDoc } from "@/utils/db";
 import { faGithub, faSlack } from "@fortawesome/free-brands-svg-icons";

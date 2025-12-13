@@ -9,10 +9,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
   providers: providers(),
   callbacks: {
-    authorized: async ({ auth }) => {
-      return !!auth
-    },
-  },
+    authorized: async ({ request, auth }) => { 
+      if (request.nextUrl.pathname === "/") return true;
+      return !!auth;
+    }
+  }
 });
 
 function providers() {
