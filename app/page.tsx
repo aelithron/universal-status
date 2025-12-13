@@ -38,6 +38,11 @@ function Landing() {
           <li><FontAwesomeIcon icon={faCoffee} /> <a href="https://status.cafe" target="_blank" className="underline hover:text-sky-500">Status.Cafe</a></li>
         </ul>
       </div>
+      <h2 className="text-xl font-semibold">How do I use it?</h2>
+      <div className="items-start">
+        <p>The app is quite simple to use! Just sign in with the button above.</p>
+        <p>If you want to send updates to other platforms, click on the settings gear in the app and authorize other platforms.</p>
+      </div>
     </div>
   );
 }
