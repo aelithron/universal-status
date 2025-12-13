@@ -5,16 +5,15 @@ import client from "./db";
 
 export async function changeStatus(userDoc: UserDoc, platforms: Platform[], status: string, emoji: Emoji, expiry: Date | null): Promise<PlatformError[]> {
   const setAt = new Date();
-  console.log(expiry);
   const oldStatuses = userDoc.previousStatuses;
-    oldStatuses.push(userDoc.status);
+    if (userDoc.status.status !== "No status set.") oldStatuses.push(userDoc.status);
     await client.db(process.env.MONGODB_DB).collection<UserDoc>("statuses").updateOne({ user: userDoc.user }, {
       $set: {
         status: { status, emoji, expiry, setAt },
         previousStatuses: oldStatuses
       },
     });
-    console.log(`User ${userDoc.user} - ${emoji} ${status} (at ${setAt.toTimeString()})${expiry && ` (expires at ${expiry.toTimeString()})`}`);
+    console.log(`User ${userDoc.user} - ${emoji} ${status} (at ${setAt.toTimeString()})${expiry ? ` (expires at ${expiry.toTimeString()})`: ""}`);
   
     const platformErrors: PlatformError[] = [];
     if (platforms.includes("github") && userDoc.githubToken) {
