@@ -3,7 +3,6 @@ import StatusForm, { StatusTime } from "./status.form";
 import { faGear, faSignIn, faSignOut } from "@fortawesome/free-solid-svg-icons";
 import Image from "next/image";
 import { auth, signOut } from "@/auth";
-import { signIn } from "next-auth/react";
 import { createUserDoc, getUserDoc } from "@/utils/db";
 import Link from "next/link";
 import { Session } from "next-auth";
