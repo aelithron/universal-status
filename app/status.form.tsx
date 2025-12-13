@@ -76,10 +76,12 @@ export default function StatusForm({ enabledPlatforms }: { enabledPlatforms: Pla
           <button type="button" className={`${fieldStyles} hover:text-sky-500`} onClick={() => changeDialog("expiry")}><FontAwesomeIcon icon={faClock} /></button>
           <button type="submit" className={`${fieldStyles} ${isLoading ? "bg-slate-400 dark:bg-slate-800 text-slate-600 dark:text-slate-400 dark:border-slate-900" : "hover:text-sky-500"}`} disabled={isLoading}><FontAwesomeIcon icon={isLoading ? faSync : faArrowRight} /></button>
         </div>
+        <div className="flex flex-col items-center absolute mt-22">
+          {openDialog === "emoji" && <EmojiPicker onEmojiClick={(e) => selectEmoji(e)} theme={Theme.AUTO} />}
+          {openDialog === "platforms" && <PlatformSelector platforms={platforms} setPlatforms={setPlatforms} allPlatforms={allPlatforms} />}
+          {openDialog === "expiry" && <ExpirySelector expiry={expiry} setExpiry={setExpiry} />}
+        </div>
       </div>
-      {openDialog === "emoji" && <div className="flex items-center absolute mt-27"><EmojiPicker onEmojiClick={(e) => selectEmoji(e)} theme={Theme.AUTO} /></div>}
-      {openDialog === "platforms" && <div className="flex items-center absolute mt-27"><PlatformSelector platforms={platforms} setPlatforms={setPlatforms} allPlatforms={allPlatforms} /></div>}
-      {openDialog === "expiry" && <div className="flex items-center absolute mt-27"><ExpirySelector expiry={expiry} setExpiry={setExpiry} /></div>}
     </form>
   )
 }
