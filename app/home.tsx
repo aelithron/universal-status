@@ -2,7 +2,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import StatusForm, { StatusTime } from "./status.form";
 import { faGear, faSignIn, faSignOut } from "@fortawesome/free-solid-svg-icons";
 import Image from "next/image";
-import { auth, signOut } from "@/auth";
+import { auth, signIn, signOut } from "@/auth";
 import { createUserDoc, getUserDoc } from "@/utils/db";
 import Link from "next/link";
 import { Session } from "next-auth";

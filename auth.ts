@@ -13,7 +13,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (request.nextUrl.pathname === "/") return true;
       return !!auth;
     }
-    }
   }
 });
 
