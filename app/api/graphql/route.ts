@@ -59,7 +59,7 @@ async function setStatus(status: string, emoji: string, expiry: string | null | 
   const session = await auth();
   if (!session || !session.user) throw new GraphQLError("Not logged in, please log in to continue.", { extensions: { code: "UNAUTHORIZED" } });
   if (!session.user.email) throw new GraphQLError("You don't have an email in your profile, try logging back in.", { extensions: { code: "INVALID_PROFILE" } });
-  if (expiry && (isNaN(new Date(expiry).valueOf()) || new Date(expiry) < new Date())) throw new GraphQLError("An 'expiry' parameter was in the request, but it was not valid!", { extensions: { code: "INVALID_EXPIRY" } })
+  if (expiry && (isNaN(new Date(expiry).valueOf()) || new Date(expiry) < new Date())) throw new GraphQLError("An 'expiry' parameter was in the request, but it was not valid!", { extensions: { code: "INVALID_EXPIRY" } });
   if (!platforms) platforms = getSelectablePlatforms();
   const userDoc = await getUserDoc(session.user.email);
   if (!userDoc) throw new GraphQLError("The provided user doesn't exist, try logging back in.", { extensions: { code: "INVALID_USER" } });
