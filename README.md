@@ -51,7 +51,7 @@ services:
     restart: unless-stopped
     environment:
       MONGODB_URI: ""
-      MONGOBD_DB: ""
+      MONGODB_DB: ""
       AUTH_SECRET: ""
       AUTH_URL: ""
       # DISCORD_ID: ""
