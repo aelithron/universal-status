@@ -1,5 +1,5 @@
 import { Emoji } from "emoji-type";
-import client, { getUserDoc } from "./db";
+import getClient, { getUserDoc } from "./db";
 import { ApolloClient, gql } from "@apollo/client";
 import { InMemoryCache } from "@apollo/client";
 import { HttpLink } from "@apollo/client";
@@ -101,7 +101,7 @@ export async function updateStatusCafe(user: string, status: string, emoji: Emoj
     const userCookie = cookies.find(c => c.startsWith("status="));
     const csrfCookie = cookies.find(c => c.startsWith("_gorilla_csrf="));
     if (!userCookie) return { message: "Failed to update status: Likely invalid credentials, try reauthenticating!", error: true };
-    await client.db(process.env.MONGODB_DB).collection<UserDoc>("statuses").updateOne({ user }, {
+    await getClient().db(process.env.MONGODB_DB).collection<UserDoc>("statuses").updateOne({ user }, {
       $set: { statusCafeCookie: userCookie!, statusCafeCSRF: csrfCookie! }
     });
     return { message: "Status updated successfully!", error: false };

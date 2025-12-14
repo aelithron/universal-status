@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import { UserDoc } from "@/universalstatus";
-import client, { getUserDoc } from "@/utils/db";
+import getClient, { getUserDoc } from "@/utils/db";
 import { NextRequest, NextResponse } from "next/server";
 import { JSDOM } from "jsdom";
 import fetchCookie from "fetch-cookie";
@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
   const userCookie = cookies.find(c => c.startsWith("status="));
   const csrfCookie = cookies.find(c => c.startsWith("_gorilla_csrf="));
   if (!userCookie) return NextResponse.json({ success: false }, { status: 401 })
-  await client.db(process.env.MONGODB_DB).collection<UserDoc>("statuses").updateOne({ user: session.user.email }, {
+  await getClient().db(process.env.MONGODB_DB).collection<UserDoc>("statuses").updateOne({ user: session.user.email }, {
     $set: { statusCafeCookie: userCookie, statusCafeCSRF: csrfCookie }
   });
   return NextResponse.json({ success: true });
@@ -51,7 +51,7 @@ export async function DELETE() {
   if (session.user.email === null || session.user.email === undefined) return NextResponse.json({ error: "invalid_profile", message: "You don't have an email in your profile, try logging back in." }, { status: 400 });
   const userDoc = await getUserDoc(session.user.email);
   if (!userDoc) return NextResponse.json({ error: "invalid_user", message: "The provided user doesn't exist, try logging back in." }, { status: 400 });
-  await client.db(process.env.MONGODB_DB).collection<UserDoc>("statuses").updateOne({ user: session.user.email }, {
+  await getClient().db(process.env.MONGODB_DB).collection<UserDoc>("statuses").updateOne({ user: session.user.email }, {
     $set: { statusCafeCookie: null, statusCafeCSRF: null }
   });
   return NextResponse.json({ message: "Removed your Status.Café token successfully." });

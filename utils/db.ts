@@ -1,30 +1,28 @@
 import { UserDoc } from "@/universalstatus";
 import { MongoClient, ObjectId, ServerApiVersion } from "mongodb";
 
-const uri = process.env.MONGODB_URI;
 const options = {
   serverApi: {
     version: ServerApiVersion.v1,
     strict: true,
-    deprecationErrors: true,
-  },
+    deprecationErrors: true
+  }
 }
-if (!uri) throw new Error("No MONGODB_URI environment variable.");
 
-let client: MongoClient;
-if (process.env.NODE_ENV === "development") {
-  // eslint-disable-next-line prefer-const
-  let globalWithMongo = global as typeof globalThis & {
-    _mongoClient?: MongoClient;
+let client: MongoClient | undefined;
+export default function getClient() {
+  if (!client) {
+    const uri = process.env.MONGODB_URI;
+    if (!uri) throw new Error("There is no MONGODB_URI environment variable, please include one!")
+    if (process.env.NODE_ENV === "development") {
+      // eslint-disable-next-line prefer-const
+      let globalWithMongo = global as typeof globalThis & { _mongoClient?: MongoClient; }
+      if (!globalWithMongo._mongoClient) globalWithMongo._mongoClient = new MongoClient(uri, options);
+      client = globalWithMongo._mongoClient;
+    } else client = new MongoClient(uri, options);
   }
-  if (!globalWithMongo._mongoClient) {
-    globalWithMongo._mongoClient = new MongoClient(uri, options);
-  }
-  client = globalWithMongo._mongoClient;
-} else {
-  client = new MongoClient(uri, options);
+  return client;
 }
-export default client;
 
 export async function createUserDoc(user: string): Promise<UserDoc | null> {
   const userDoc: UserDoc = {
@@ -37,15 +35,15 @@ export async function createUserDoc(user: string): Promise<UserDoc | null> {
     statusCafeCookie: null,
     statusCafeCSRF: null
   };
-  await client.db(process.env.MONGODB_DB).collection<UserDoc>("statuses").insertOne(userDoc);
+  await getClient().db(process.env.MONGODB_DB).collection<UserDoc>("statuses").insertOne(userDoc);
   return userDoc;
 }
 export async function getUserDoc(user: string): Promise<UserDoc | null> {
-  const userDoc = await client.db(process.env.MONGODB_DB).collection<UserDoc>("statuses").findOne({ user });
+  const userDoc = await getClient().db(process.env.MONGODB_DB).collection<UserDoc>("statuses").findOne({ user });
   if (userDoc && userDoc.status.expiry && new Date(userDoc?.status.expiry) <= new Date()) {
     const oldStatuses = userDoc.previousStatuses;
     oldStatuses.push(userDoc.status);
-    await client.db(process.env.MONGODB_DB).collection<UserDoc>("statuses").updateOne({ user: userDoc.user }, {
+    await getClient().db(process.env.MONGODB_DB).collection<UserDoc>("statuses").updateOne({ user: userDoc.user }, {
       $set: {
         status: { status: "No status set.", emoji: "✨", expiry: null, setAt: new Date() },
         previousStatuses: oldStatuses

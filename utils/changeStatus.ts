@@ -1,13 +1,13 @@
 import { Platform, PlatformError, UserDoc } from "@/universalstatus";
 import { Emoji } from "emoji-type";
 import { updateGithub, updateSlack, updateStatusCafe } from "./platforms";
-import client from "./db";
+import getClient from "./db";
 
 export async function changeStatus(userDoc: UserDoc, platforms: Platform[], status: string, emoji: Emoji, expiry: Date | null): Promise<PlatformError[]> {
   const setAt = new Date();
   const oldStatuses = userDoc.previousStatuses;
     if (userDoc.status.status !== "No status set.") oldStatuses.push(userDoc.status);
-    await client.db(process.env.MONGODB_DB).collection<UserDoc>("statuses").updateOne({ user: userDoc.user }, {
+    await getClient().db(process.env.MONGODB_DB).collection<UserDoc>("statuses").updateOne({ user: userDoc.user }, {
       $set: {
         status: { status, emoji, expiry, setAt },
         previousStatuses: oldStatuses

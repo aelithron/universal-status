@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import { UserDoc } from "@/universalstatus";
-import client, { getUserDoc } from "@/utils/db";
+import getClient, { getUserDoc } from "@/utils/db";
 import { NextRequest, NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
@@ -28,7 +28,7 @@ export async function GET(req: NextRequest) {
   if (!githubRes) return NextResponse.json({ error: "get_token_failed", message: "Failed to get the GitHub authorization token, make sure the code is correct!" }, { status: 500 });
   const accessToken = parseGitHubReturn(await githubRes.text()).access_token;
   if (!accessToken) return NextResponse.json({ error: "get_token_failed", message: "Failed to get the GitHub authorization token, make sure the code is correct!" }, { status: 500 });
-  await client.db(process.env.MONGODB_DB).collection<UserDoc>("statuses").updateOne({ user: session.user.email }, {
+  await getClient().db(process.env.MONGODB_DB).collection<UserDoc>("statuses").updateOne({ user: session.user.email }, {
     $set: { githubToken: accessToken }
   });
   return NextResponse.redirect(`${process.env.AUTH_URL}/settings`);
@@ -49,7 +49,7 @@ export async function DELETE() {
   if (session.user.email === null || session.user.email === undefined) return NextResponse.json({ error: "invalid_profile", message: "You don't have an email in your profile, try logging back in." }, { status: 400 });
   const userDoc = await getUserDoc(session.user.email);
   if (!userDoc) return NextResponse.json({ error: "invalid_user", message: "The provided user doesn't exist, try logging back in." }, { status: 400 });
-  await client.db(process.env.MONGODB_DB).collection<UserDoc>("statuses").updateOne({ user: session.user.email }, {
+  await getClient().db(process.env.MONGODB_DB).collection<UserDoc>("statuses").updateOne({ user: session.user.email }, {
     $set: { githubToken: null }
   });
   return NextResponse.json({ message: "Removed your GitHub token successfully." });
