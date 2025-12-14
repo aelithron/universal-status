@@ -1,7 +1,7 @@
 import { startServerAndCreateNextHandler } from '@as-integrations/next';
 import { ApolloServer } from '@apollo/server';
 import { gql } from 'graphql-tag';
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
 import { getUserDoc } from '@/utils/db';
 import { GraphQLError } from 'graphql/error';
@@ -45,10 +45,33 @@ const typeDefs = gql`
 const server = new ApolloServer({ resolvers, typeDefs });
 const handler = startServerAndCreateNextHandler<NextRequest>(server, { context: async req => ({ req }) });
 export async function GET(request: NextRequest) {
-  return handler(request);
+  const response = await handler(request);
+  response.headers.set('Access-Control-Allow-Origin', 'https://studio.apollographql.com');
+  response.headers.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  response.headers.set('Access-Control-Allow-Credentials', 'true',);
+  return response;
 }
 export async function POST(request: NextRequest) {
-  return handler(request);
+  const response = await handler(request);
+  response.headers.set('Access-Control-Allow-Origin', 'https://studio.apollographql.com');
+  response.headers.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  response.headers.set('Access-Control-Allow-Credentials', 'true',);
+  return response;
+}
+
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 204,
+    headers: {
+      'Access-Control-Allow-Origin': 'https://studio.apollographql.com',
+      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      'Access-Control-Allow-Credentials': 'true',
+      'Access-Control-Max-Age': '86400'
+    }
+  });
 }
 
 async function getStatus(email: string | undefined) {
