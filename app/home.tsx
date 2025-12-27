@@ -31,6 +31,7 @@ export default async function Home() {
           <h1 className="font-semibold text-xl">Current status:</h1>
           <p className="text-lg">{userDoc!.status.emoji} {userDoc!.status.status}</p>
           <StatusTime setAt={userDoc!.status.setAt} />
+          {userDoc!.status.expiry && <div className="flex gap-1 text-slate-500">Expires at <StatusTime setAt={userDoc!.status.expiry!} /></div>}
         </div>
         <div>
           <h1 className="font-semibold text-xl">Previous statuses:</h1>
