@@ -12,6 +12,14 @@ export const metadata: Metadata = {
     default: "Universal Status"
   },
   description: "Set your status on many platforms at once.",
+  keywords: ["Universal Status", "status", "universal", "share", "status.cafe", "slack", "github"],
+  metadataBase: new URL("https://status.novatea.dev"),
+  openGraph: {
+    url: "https://status.novatea.dev",
+    siteName: "Universal Status",
+    locale: "en_US",
+    type: "website"
+  }
 };
 
 const arimo = Arimo({ subsets: ["latin"] });
